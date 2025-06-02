@@ -11,6 +11,7 @@ import {
   HiMoon,
   HiSun,
 } from "react-icons/hi";
+import { RiFoldersLine } from "react-icons/ri";
 import { useAuth } from "../components/AuthContext";
 
 function UserProfileMenu() {
@@ -266,6 +267,9 @@ export default function Layout({ children }) {
       ],
     },
     { name: "Profile", icon: HiUser, path: "/profile" },
+  
+  { name: "Categories", icon: RiFoldersLine, path: "/categories" },
+ 
   ];
 
   const activeMenuName = findActiveMenuName(menuItems, location.pathname) || "Dashboard";

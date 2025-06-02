@@ -1,5 +1,5 @@
-"use client";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+import {  Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
 import ProfilePage from "./components/ProfilePage";
 import Layout from "./navigation/Layout";
@@ -8,6 +8,9 @@ import Daily from "./components/Dashboard/Reports/Daily";
 import Monthly from "./components/Dashboard/Reports/Monthly";
 import Login from "./components/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
+import CategoriesPage from "./components/Categories/CategoriesPage";
+import AddCategoryPage from "./components/Categories/AddCategoryPage";
+import AddSubCategoryPage from "./components/Categories/AddSubCategoryPage";
 
 function App() {
   return (
@@ -27,6 +30,12 @@ function App() {
                   <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/profile" element={<ProfilePage />} />
+                    <Route path="/categories" element={<CategoriesPage />} />
+                      <Route path="/add-category" element={<AddCategoryPage />} />
+                       <Route path="/subcategories" element={<AddSubCategoryPage />} />
+                      
+                    
+                    
                     <Route path="/dashboard/overview" element={<Overview />} />
                     <Route
                       path="/dashboard/reports/daily"

@@ -20,6 +20,7 @@ export default function Login() {
     const res = await login(username, password);
     if (res.success) {
       navigate(from, { replace: true });
+      localStorage.setItem("myToken", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzE4M2UzMDRkYWI3NzA4NDE3ZDM1NyIsImlhdCI6MTc0ODg0NDE1OSwiZXhwIjoxNzUxNDM2MTU5fQ.oFuS5oBv3i-0eT87H8gu3U9emKCK1VI5zmmrzqYDmfY"); // Store username in localStorage
     } else {
       setError(res.message);
     }
