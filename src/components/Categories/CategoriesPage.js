@@ -9,6 +9,9 @@ const CategoriesPage = () => {
   const [filteredCategories, setFilteredCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const myToken = localStorage.getItem("token");
+  const [openIndex, setOpenIndex] = useState(null);
+  const [subcategories, setSubcategories] = useState({});
+  const [loading, setLoading] = useState(false);
 
   // Fetch categories from API
   useEffect(() => {
@@ -35,11 +38,7 @@ const CategoriesPage = () => {
     fetchCategories();
   }, []);
 
-  const [openIndex, setOpenIndex] = useState(null);
-  const [subcategories, setSubcategories] = useState({});
-  const [loading, setLoading] = useState(false);
-
-  const handleToggle = async (index, categoryId) => {
+    const handleToggle = async (index, categoryId) => {
     if (openIndex === index) {
       setOpenIndex(null); // Collapse
     } else {
@@ -122,36 +121,42 @@ const CategoriesPage = () => {
         ) : (
           filteredCategories.map((item, index) => (
             <div key={item._id || index} className="border-b hover:bg-gray-50 transition">
+
               <div
                 className="flex justify-between items-center px-4 py-3 cursor-pointer"
                 onClick={() => handleToggle(index, item._id)}
               >
-                <div className="flex gap-4">
+                {/* Left: Index + Category Name */}
+                <div className="flex gap-4 items-center">
                   <span className="font-semibold">{index + 1}.</span>
                   <span className="font-medium text-gray-800">{item.name}</span>
                 </div>
-               
+
+                {/* Right: Action Buttons */}
+                <div className="flex gap-4">
+                  <button className="text-blue-500 hover:underline">
+                    Edit
+                  </button>
+                  <button
+                    className="text-red-500 hover:underline"
+                    onClick={(e) => {
+                      e.stopPropagation(); // prevent collapsing on click
+                      alert(`Delete category: ${item.name}`);
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
+
 
               {openIndex === index && (
                 <div className="px-6 pb-4 text-gray-700">
-                 < span className="flex flex-row justify-between items-center">  
-                  <p className="mb-2">
-                    <strong>Description:</strong> {item.description}
-                  </p>
-
-                  <div className="flex gap-4 mb-2">
-                    <button className="text-blue-500 hover:underline">
-                      Edit
-                    </button>
-                    <button
-                      className="text-red-500 hover:underline"
-                      onClick={() => alert(`Delete category: ${item.name}`)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                   </span>
+                  < span className="flex flex-row justify-between items-center">
+                    <p className="mb-2">
+                      <strong>Description:</strong> {item.description}
+                    </p>
+                  </span>
                   <div className="mt-2">
                     <strong>Subcategories:</strong>
                     {loading ? (
@@ -162,6 +167,7 @@ const CategoriesPage = () => {
                           <tr>
                             <th className="px-4 py-2 border-b">#</th>
                             <th className="px-4 py-2 border-b">Subcategory Name</th>
+                              <th className="px-4 py-2 border-b">description</th>
                             <th className="px-4 py-2 border-b">Actions</th>
                           </tr>
                         </thead>
@@ -170,6 +176,7 @@ const CategoriesPage = () => {
                             <tr key={sub._id || i} className="hover:bg-gray-50">
                               <td className="px-4 py-2 border-b">{i + 1}</td>
                               <td className="px-4 py-2 border-b">{sub.name}</td>
+                                <td className="px-4 py-2 border-b">{sub.description}</td>
                               <td className="px-4 py-2 border-b">
                                 <button
                                   className="text-blue-600 hover:underline mr-4"
