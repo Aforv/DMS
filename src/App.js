@@ -1,5 +1,5 @@
 "use client";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
 import ProfilePage from "./components/ProfilePage";
 import Layout from "./navigation/Layout";
@@ -8,6 +8,8 @@ import Daily from "./components/Dashboard/Reports/Daily";
 import Monthly from "./components/Dashboard/Reports/Monthly";
 import Login from "./components/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
+import HospitalTable from "./components/Hospitals/HospitalTable";
+import AddHospitalForm from "./components/Hospitals/AddHospitalForm";
 
 function App() {
   return (
@@ -36,6 +38,8 @@ function App() {
                       path="/dashboard/reports/monthly"
                       element={<Monthly />}
                     />
+                    <Route path="/hospitals/list" element={<HospitalTable />} />
+                    <Route path="/hospitals/addnewhospital" element={<AddHospitalForm />} />
                     {/* Add more protected routes here */}
                   </Routes>
                   </div>

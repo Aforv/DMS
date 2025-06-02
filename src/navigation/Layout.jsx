@@ -10,6 +10,7 @@ import {
   HiChevronDown,
   HiMoon,
   HiSun,
+  HiOfficeBuilding,
 } from "react-icons/hi";
 import { useAuth } from "../components/AuthContext";
 
@@ -266,6 +267,7 @@ export default function Layout({ children }) {
       ],
     },
     { name: "Profile", icon: HiUser, path: "/profile" },
+    { name: "Hospitals", icon: HiOfficeBuilding, path: "/hospitals/list" }
   ];
 
   const activeMenuName = findActiveMenuName(menuItems, location.pathname) || "Dashboard";
