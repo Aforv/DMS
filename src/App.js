@@ -8,11 +8,14 @@ import Daily from "./components/Dashboard/Reports/Daily";
 import Monthly from "./components/Dashboard/Reports/Monthly";
 import Login from "./components/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Inventory from "./components/inventory/Inventory";
+
 
 function App() {
   return (
     <>
         <Routes>
+          {/* <Inventory/> */}
           <Route
             path="/login"
             element={<Login />}
@@ -36,6 +39,7 @@ function App() {
                       path="/dashboard/reports/monthly"
                       element={<Monthly />}
                     />
+                    <Route path = "/inventory" element = {<Inventory/>}/>
                     {/* Add more protected routes here */}
                   </Routes>
                   </div>

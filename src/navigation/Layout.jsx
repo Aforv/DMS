@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import { ImStatsBars2 } from "react-icons/im";
 import {
   HiHome,
   HiUser,
@@ -10,6 +11,7 @@ import {
   HiChevronDown,
   HiMoon,
   HiSun,
+
 } from "react-icons/hi";
 import { useAuth } from "../components/AuthContext";
 
@@ -266,6 +268,8 @@ export default function Layout({ children }) {
       ],
     },
     { name: "Profile", icon: HiUser, path: "/profile" },
+    { name: "Inventory", icon: ImStatsBars2, path: "/inventory" },
+ 
   ];
 
   const activeMenuName = findActiveMenuName(menuItems, location.pathname) || "Dashboard";
