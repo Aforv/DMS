@@ -1,157 +1,142 @@
-import { useState, useEffect } from "react";
-import {
-  Modal,
-  ModalHeader,
-  ModalBody,
-  Button,
-  TextInput,
-  Label,
-} from "flowbite-react";
 
-const EditSubCategory = ({ subcategoryId, openModal, setOpenModal }) => {
-  const [subcategoryData, setSubcategoryData] = useState({
-    name: "",
+
+import { Button, Label, TextInput } from "flowbite-react";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { HiOutlineX } from "react-icons/hi";
+import axios from "axios";
+
+const EditSubCategory = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
+  const [openDrawer, setOpenDrawer] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [subCategoryData, setSubCategoryData] = useState({
+    subcategory: "",
     description: "",
   });
-  const [popupMessage, setPopupMessage] = useState(null);
 
-  const myToken = localStorage.getItem("token");
+  const closeDrawer = () => {
+    setOpenDrawer(false);
+    navigate(-1);
+  };
 
   useEffect(() => {
-    if (!subcategoryId) return;
-
-    const fetchSubcategory = async () => {
+    const fetchSubCategory = async () => {
       try {
-        const response = await fetch(
-          "http://43.250.40.133:5005/api/v1/subcategories",
+        const { data } = await axios.get(
+          `http://43.250.40.133:5005/api/v1/subcategories/${id}`,
           {
-            headers: {
-              Authorization: `Bearer ${myToken}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
 
-        if (response.ok) {
-          const data = await response.json();
-          const found = Array.isArray(data)
-            ? data.find((item) => item._id === subcategoryId)
-            : null;
+        console.log("Fetched subcategory edit  data:", data.data);
 
-          if (found) {
-            setSubcategoryData({
-              name: found.name,
-              description: found.description,
-            });
-          } else {
-            setPopupMessage("Subcategory not found.");
-          }
-        } else {
-          setPopupMessage("Failed to load subcategories");
-        }
+        setSubCategoryData({
+          subcategory: data.data.name || "",
+          description: data.data.description || "",
+        });
       } catch (error) {
-        setPopupMessage("Error: " + error.message);
+        console.error("Error fetching subcategory:", error);
+        alert("Failed to load subcategory");
+        navigate("/categories");
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchSubcategory();
-  }, [subcategoryId, myToken]);
+    fetchSubCategory();
+  }, [id, token, navigate]);
 
-  const handleUpdate = async () => {
-    if (!subcategoryId) {
-      setPopupMessage("Subcategory ID is missing.");
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setSubCategoryData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!subCategoryData.subcategory.trim()) {
+      alert("Subcategory name is required");
       return;
     }
 
     try {
-      const response = await fetch(
-        `http://43.250.40.133:5005/api/v1/subcategories/${subcategoryId}`,
+      await axios.put(
+        `http://43.250.40.133:5005/api/v1/subcategories/${id}`,
         {
-          method: "PUT",
+          name: subCategoryData.subcategory,
+          description: subCategoryData.description,
+        },
+        {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${myToken}`,
+            Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(subcategoryData),
         }
       );
 
-      if (response.ok) {
-        setPopupMessage("Subcategory updated successfully");
-        setOpenModal(false);
-      } else {
-        const error = await response.json();
-        setPopupMessage("Update failed: " + error.message);
-      }
-    } catch (err) {
-      setPopupMessage("Error: " + err.message);
+      alert("Subcategory updated successfully!");
+      navigate("/categories");
+    } catch (error) {
+      console.error("Update failed:", error);
+      alert("Error updating subcategory");
     }
   };
 
-  const onCloseModal = () => {
-    setOpenModal(false);
-  };
+  if (loading) {
+    return <div className="text-center mt-10 text-gray-500">Loading subcategory...</div>;
+  }
 
   return (
-    <Modal show={openModal} size="md" onClose={onCloseModal} popup>
-      <ModalHeader />
-      <ModalBody>
-        <div className="space-y-6">
-          <h3 className="text-xl font-medium text-gray-900 dark:text-white">
-            Edit Subcategory
-          </h3>
+    openDrawer && (
+      <div className="fixed inset-0 z-50 flex justify-end bg-black bg-opacity-30">
+        <div className="w-full max-w-md bg-white h-full shadow-lg p-6 overflow-y-auto">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-xl font-semibold text-gray-800">Edit SubCategory</h3>
+            <button onClick={closeDrawer}>
+              <HiOutlineX className="w-6 h-6 text-gray-600 hover:text-red-500" />
+            </button>
+          </div>
 
-          {popupMessage && (
-            <div className="p-3 rounded bg-green-100 text-green-800 border border-green-300">
-              {popupMessage}
-              <button
-                className="float-right font-bold ml-2"
-                onClick={() => setPopupMessage(null)}
-              >
-                ×
-              </button>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <Label htmlFor="subcategory" value="SubCategory" />
+              <TextInput
+                id="subcategory"
+                name="subcategory"
+                value={subCategoryData.subcategory}
+                onChange={handleChange}
+                placeholder="Enter subcategory name"
+                required
+              />
             </div>
-          )}
 
-          <div>
-            <Label htmlFor="subcategory-name">Subcategory Name</Label>
-            <TextInput
-              id="subcategory-name"
-              placeholder="Enter name"
-              value={subcategoryData.name}
-              onChange={(e) =>
-                setSubcategoryData({ ...subcategoryData, name: e.target.value })
-              }
-              required
-            />
-          </div>
+            <div>
+              <Label htmlFor="description" value="Description" />
+              <TextInput
+                id="description"
+                name="description"
+                value={subCategoryData.description}
+                onChange={handleChange}
+                placeholder="Enter description"
+                required
+              />
+            </div>
 
-          <div>
-            <Label htmlFor="subcategory-desc">Description</Label>
-            <TextInput
-              id="subcategory-desc"
-              placeholder="Enter description"
-              value={subcategoryData.description}
-              onChange={(e) =>
-                setSubcategoryData({
-                  ...subcategoryData,
-                  description: e.target.value,
-                })
-              }
-              required
-            />
-          </div>
-
-          <div className="flex justify-between">
-            <Button color="blue" onClick={handleUpdate}>
-              Save
-            </Button>
-            <Button color="gray" onClick={onCloseModal}>
-              Cancel
-            </Button>
-          </div>
+            <div className="flex justify-between mt-4">
+              <Button color="gray" onClick={closeDrawer} type="button">
+                Cancel
+              </Button>
+              <Button type="submit">Update</Button>
+            </div>
+          </form>
         </div>
-      </ModalBody>
-    </Modal>
+      </div>
+    )
   );
 };
 
