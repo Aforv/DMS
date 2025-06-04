@@ -52,52 +52,36 @@ function Inventory() {
     }
   };
 
-  const fetchProducts = async () => {
-    try {
-      const res = await axios.get(
-        "http://43.250.40.133:5005/api/v1/products",
-        axiosConfig()
-      );
-      if (res.data?.data) {
-        setProducts(res.data.data);
-      }
-    } catch (err) {
-      console.error("Error fetching products:", err);
-    }
-  };
-
   useEffect(() => {
     fetchData();
-    fetchProducts();
   }, []);
 
   const validate = () => {
     let tempErrors = {};
 
-    if (!formData.product || formData.product.trim() === "") {
-      tempErrors.product = "Product is required";
-    }
-
+   if (
+    !formData.product || 
+    (typeof formData.product === "string" && formData.product.trim() === "") ||
+    (typeof formData.product === "object" && !formData.product.name)
+  ) {
+    tempErrors.product = "Product is required";
+  }
     if (!formData.batchNumber || formData.batchNumber.trim() === "") {
       tempErrors.batchNumber = "Batch Number is required";
     }
-
     if (!formData.quantity) {
       tempErrors.quantity = "Quantity is required";
     } else if (isNaN(formData.quantity) || Number(formData.quantity) <= 0) {
       tempErrors.quantity = "Quantity must be a positive number";
     }
-
     if (!formData.location || formData.location.trim() === "") {
       tempErrors.location = "Location is required";
     }
-
     if (!formData.dpValue) {
       tempErrors.dpValue = "DpValue is required";
     } else if (isNaN(formData.dpValue) || Number(formData.dpValue) <= 0) {
       tempErrors.dpValue = "DpValue must be a positive number";
     }
-
     if (!formData.expiryDate) {
       tempErrors.expiryDate = "Expiry Date is required";
     } else {
@@ -108,7 +92,9 @@ function Inventory() {
       }
     }
 
+
     setErrors(tempErrors);
+
     return Object.keys(tempErrors).length === 0;
   };
 
@@ -118,48 +104,37 @@ function Inventory() {
   };
 
   const submit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!validate()) return;
+  if (!validate()) return;
 
-    const matchedProduct = products.find(
-      (p) => p.name.toLowerCase() === formData.product.toLowerCase()
-    );
+  console.log("Submitting formData:", formData);
 
-    if (!matchedProduct) {
-      alert("Product not found. Please enter a valid product name.");
-      return;
+  try {
+    if (isEdit && formData._id) {
+      await axios.put(
+        `http://43.250.40.133:5005/api/v1/inventory/${formData._id}`,
+        formData,
+        axiosConfig()
+      );
+      alert("Inventory updated successfully!");
+    } else {
+      await axios.post(
+        "http://43.250.40.133:5005/api/v1/inventory",
+        formData,
+        axiosConfig()
+      );
+      alert("Inventory added successfully!");
     }
 
-    const payload = {
-      ...formData,
-      product: matchedProduct._id,
-    };
+    fetchData();   
+    resetForm();  
 
-    try {
-      if (isEdit && formData._id) {
-        await axios.put(
-          `http://43.250.40.133:5005/api/v1/inventory/${formData._id}`,
-          payload,
-          axiosConfig()
-        );
-        alert("Inventory updated successfully!");
-      } else {
-        await axios.post(
-          "http://43.250.40.133:5005/api/v1/inventory",
-          payload,
-          axiosConfig()
-        );
-        alert("Inventory added successfully!");
-      }
-
-      fetchData();
-      resetForm();
-    } catch (error) {
-      console.error("Error submitting form:", error.response?.data || error);
-      alert("Failed to submit inventory.");
-    }
-  };
+  } catch (error) {
+    console.error("Error submitting form:", error.response?.data || error);
+    alert("Failed to submit inventory.");
+  }
+};
 
   const resetForm = () => {
     setFormData({
@@ -195,21 +170,24 @@ function Inventory() {
   });
 
   const editItem = (item) => {
-    if (!item) return;
-    setFormData({
-      _id: item._id,
-      product: item.product?.name || "",
-      batchNumber: item.batchNumber || "",
-      quantity: item.quantity || "",
-      location: item.location || "",
-      dpValue: item.dpValue || "",
-      expiryDate: item.expiryDate || "",
-      notes: item.notes || "",
-    });
-    setIsEdit(true);
-    setOpenModal(true);
-    setErrors({});
-  };
+  console.log("editItem received:", item);
+  if (!item) return;
+  setFormData({
+    _id: item._id,
+    product: item.product || "",
+    batchNumber: item.batchNumber || "",
+    quantity: item.quantity || "",
+    location: item.location || "",
+    dpValue: item.dpValue || "",
+    expiryDate: item.expiryDate || "",
+    notes: item.notes || "",
+  });
+  setIsEdit(true);
+  setOpenModal(true);
+  setErrors({});
+};
+
+
 
   return (
     <>
@@ -220,7 +198,7 @@ function Inventory() {
       </div>
 
       <div className="flex justify-between items-center ">
-        <div className="w-full max-w-[200px]">
+       <div className="w-full max-w-[200px]">
           <TextInput
             icon={HiSearch}
             type="text"
@@ -275,9 +253,7 @@ function Inventory() {
                   color={errors.batchNumber ? "failure" : "gray"}
                 />
                 {errors.batchNumber && (
-                  <p className="text-red-600 text-sm mt-1">
-                    {errors.batchNumber}
-                  </p>
+                  <p className="text-red-600 text-sm mt-1">{errors.batchNumber}</p>
                 )}
               </div>
 
@@ -344,9 +320,7 @@ function Inventory() {
                   color={errors.expiryDate ? "failure" : "gray"}
                 />
                 {errors.expiryDate && (
-                  <p className="text-red-600 text-sm mt-1">
-                    {errors.expiryDate}
-                  </p>
+                  <p className="text-red-600 text-sm mt-1">{errors.expiryDate}</p>
                 )}
               </div>
 
@@ -379,7 +353,8 @@ function Inventory() {
         </div>
       </Drawer>
 
-      <DataTableWithMenu data={filteredList} onEdit={editItem} />
+    <DataTableWithMenu data={filteredList} onEdit={editItem} />
+    
     </>
   );
 }
