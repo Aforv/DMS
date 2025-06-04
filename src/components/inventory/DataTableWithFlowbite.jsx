@@ -6,9 +6,9 @@ import { HiSearch, HiTrash, HiPencil, HiDotsVertical } from "react-icons/hi";
 const DataTableWithMenu = ({ data = [], onEdit, onDelete }) => {
   const [filterText, setFilterText] = useState("");
 
-  // Filter items based on filterText
+  
   const filteredItems = data.filter((item) => {
-    // Safely map each field to string or empty string to avoid errors
+
     const combined = [
       item.product?.name || "",
       item.batchNumber || "",
@@ -131,17 +131,7 @@ const DataTableWithMenu = ({ data = [], onEdit, onDelete }) => {
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-sm">
-      {/* Search Input */}
-      {/* <div className="mb-4 max-w-xs">
-        <TextInput
-          icon={HiSearch}
-          type="text"
-          placeholder="Search inventory..."
-          value={filterText}
-          onChange={(e) => setFilterText(e.target.value)}
-          sizing="sm"
-        />
-      </div> */}
+      
 
       {/* Data Table */}
       <DataTable
