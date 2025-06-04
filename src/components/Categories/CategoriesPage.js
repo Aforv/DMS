@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -8,12 +7,13 @@ const CategoriesPage = () => {
   const [categories, setCategories] = useState([]);
   const [filteredCategories, setFilteredCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const myToken = localStorage.getItem("token");
   const [openIndex, setOpenIndex] = useState(null);
   const [subcategories, setSubcategories] = useState({});
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
 
-  // Fetch categories from API
+  const myToken = localStorage.getItem("Token");
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -21,40 +21,48 @@ const CategoriesPage = () => {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${myToken}`
-          }
+            Authorization: `Bearer ${myToken}`,
+          },
         });
-        const data = await response.json();
-        if (data) {
-          setCategories(data);
-          setFilteredCategories(data);
-        } else {
-          console.error("Failed to load categories");
-        }
+
+        const result = await response.json();
+        const categoryList = result?.data || [];
+
+        setCategories(categoryList);
+        setFilteredCategories(categoryList);
       } catch (error) {
         console.error("Error fetching categories:", error);
+      } finally {
+        setInitialLoading(false);
       }
     };
-    fetchCategories();
-  }, []);
 
-    const handleToggle = async (index, categoryId) => {
+    fetchCategories();
+  }, [myToken]);
+
+  const handleToggle = async (index, categoryId) => {
     if (openIndex === index) {
-      setOpenIndex(null); // Collapse
+      setOpenIndex(null);
     } else {
-      setOpenIndex(index); // Expand
+      setOpenIndex(index);
+
       if (!subcategories[categoryId]) {
         setLoading(true);
         try {
           const response = await axios.get(
-            `http://43.250.40.133:5005/api/v1/subcategories?category=${categoryId}`
+            `http://43.250.40.133:5005/api/v1/subcategories?category=${categoryId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${myToken}`,
+              },
+            }
           );
           setSubcategories((prev) => ({
             ...prev,
-            [categoryId]: response.data.data || [],
+            [categoryId]: response.data?.data || [],
           }));
         } catch (error) {
-          console.error('Failed to fetch subcategories:', error);
+          console.error("Failed to fetch subcategories:", error);
           setSubcategories((prev) => ({
             ...prev,
             [categoryId]: [],
@@ -77,10 +85,73 @@ const CategoriesPage = () => {
 
   const handleExportToExcel = () => {
     alert("Export to Excel feature coming soon!");
+    // Can add XLSX.js export logic here later
   };
+
+  // Delete category by ID
+  const handleDeleteCategory = async (categoryId, categoryName) => {
+    if (!window.confirm(`Are you sure you want to delete category: ${categoryName}?`)) {
+      return;
+    }
+
+    try {
+      await axios.delete(`http://43.250.40.133:5005/api/v1/categories/${categoryId}`, {
+        headers: {
+          Authorization: `Bearer ${myToken}`,
+        },
+      });
+
+      // Remove deleted category from states
+      setCategories((prev) => prev.filter((cat) => cat._id !== categoryId));
+      setFilteredCategories((prev) => prev.filter((cat) => cat._id !== categoryId));
+      // Also remove any subcategories cached
+      setSubcategories((prev) => {
+        const newSub = { ...prev };
+        delete newSub[categoryId];
+        return newSub;
+      });
+
+      alert(`Category "${categoryName}" deleted successfully.`);
+    } catch (error) {
+      console.error("Failed to delete category:", error);
+      alert("Failed to delete category. Please try again.");
+    }
+  };
+
+  // Delete subcategory by ID
+  const handleDeleteSubcategory = async (categoryId, subcategoryId, subcategoryName) => {
+    if (!window.confirm(`Are you sure you want to delete subcategory: ${subcategoryName}?`)) {
+      return;
+    }
+
+    try {
+      await axios.delete(`http://43.250.40.133:5005/api/v1/subcategories/${subcategoryId}`, {
+        headers: {
+          Authorization: `Bearer ${myToken}`,
+        },
+      });
+
+      // Remove deleted subcategory from state
+      setSubcategories((prev) => {
+        const updatedSubs = prev[categoryId]?.filter((sub) => sub._id !== subcategoryId) || [];
+        return {
+          ...prev,
+          [categoryId]: updatedSubs,
+        };
+      });
+
+      alert(`Subcategory "${subcategoryName}" deleted successfully.`);
+    } catch (error) {
+      console.error("Failed to delete subcategory:", error);
+      alert("Failed to delete subcategory. Please try again.");
+    }
+  };
+
+ 
 
   return (
     <div className="p-6 bg-white rounded-md shadow-md">
+      {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">CATEGORIES</h2>
         <div className="flex gap-2">
@@ -105,6 +176,7 @@ const CategoriesPage = () => {
         </div>
       </div>
 
+      {/* Search */}
       <div className="mb-4">
         <input
           type="text"
@@ -115,33 +187,33 @@ const CategoriesPage = () => {
         />
       </div>
 
+      {/* Categories List */}
       <div className="bg-white border rounded-md shadow-sm">
-        {filteredCategories.length === 0 ? (
+        {initialLoading ? (
+          <div className="text-center py-4 text-gray-500">Loading categories...</div>
+        ) : filteredCategories.length === 0 ? (
           <div className="text-center py-4 text-gray-500">No categories found.</div>
         ) : (
           filteredCategories.map((item, index) => (
             <div key={item._id || index} className="border-b hover:bg-gray-50 transition">
-
               <div
                 className="flex justify-between items-center px-4 py-3 cursor-pointer"
                 onClick={() => handleToggle(index, item._id)}
               >
-                {/* Left: Index + Category Name */}
                 <div className="flex gap-4 items-center">
                   <span className="font-semibold">{index + 1}.</span>
                   <span className="font-medium text-gray-800">{item.name}</span>
                 </div>
-
-                {/* Right: Action Buttons */}
                 <div className="flex gap-4">
-                  <button className="text-blue-500 hover:underline">
-                    Edit
-                  </button>
+                  <button className="text-blue-500 hover:underline"
+                   onClick={() => navigate(`/edit-category/${item._id}`)}
+                  >Edit</button>
                   <button
                     className="text-red-500 hover:underline"
                     onClick={(e) => {
-                      e.stopPropagation(); // prevent collapsing on click
+                      e.stopPropagation();
                       alert(`Delete category: ${item.name}`);
+                      handleDeleteCategory(item._id, item.name);
                     }}
                   >
                     Delete
@@ -149,14 +221,12 @@ const CategoriesPage = () => {
                 </div>
               </div>
 
-
+              {/* Expanded Subcategories */}
               {openIndex === index && (
                 <div className="px-6 pb-4 text-gray-700">
-                  < span className="flex flex-row justify-between items-center">
-                    <p className="mb-2">
-                      <strong>Description:</strong> {item.description}
-                    </p>
-                  </span>
+                  <p className="mb-2">
+                    <strong>Description:</strong> {item.description || "N/A"}
+                  </p>
                   <div className="mt-2">
                     <strong>Subcategories:</strong>
                     {loading ? (
@@ -167,7 +237,7 @@ const CategoriesPage = () => {
                           <tr>
                             <th className="px-4 py-2 border-b">#</th>
                             <th className="px-4 py-2 border-b">Subcategory Name</th>
-                              <th className="px-4 py-2 border-b">description</th>
+                            <th className="px-4 py-2 border-b">Description</th>
                             <th className="px-4 py-2 border-b">Actions</th>
                           </tr>
                         </thead>
@@ -176,17 +246,19 @@ const CategoriesPage = () => {
                             <tr key={sub._id || i} className="hover:bg-gray-50">
                               <td className="px-4 py-2 border-b">{i + 1}</td>
                               <td className="px-4 py-2 border-b">{sub.name}</td>
-                                <td className="px-4 py-2 border-b">{sub.description}</td>
+                              <td className="px-4 py-2 border-b">{sub.description}</td>
                               <td className="px-4 py-2 border-b">
                                 <button
                                   className="text-blue-600 hover:underline mr-4"
-                                  onClick={() => alert(`Edit subcategory: ${sub.name}`)}
+                                 onClick={() => navigate(`/edit-subcategory/${sub._id}`)}
                                 >
                                   Edit
                                 </button>
                                 <button
                                   className="text-red-600 hover:underline"
-                                  onClick={() => alert(`Delete subcategory: ${sub.name}`)}
+                                  alert={`Delete subcategory: ${sub.name}`}
+                                  onClick={() => handleDeleteSubcategory(item._id, sub._id, sub.name)
+                                }
                                 >
                                   Delete
                                 </button>

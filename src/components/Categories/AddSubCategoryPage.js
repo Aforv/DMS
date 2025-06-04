@@ -1,33 +1,67 @@
 
 
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  Button,
+  Label,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  TextInput,
+  Select,
+  Spinner,
+} from "flowbite-react";
 
 const AddSubCategoryPage = () => {
+  const [openModal, setOpenModal] = useState(true);
   const [subcategory, setSubCategory] = useState("");
   const [description, setDescription] = useState("");
   const [categoryList, setCategoryList] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
-const myToken = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
+
+  const onCloseModal = () => {
+    setOpenModal(false);
+    navigate("/categories");
+  };
 
   useEffect(() => {
+    if (!token) {
+      console.error("No token found in localStorage");
+      return;
+    }
+
     const fetchCategories = async () => {
       try {
-        const response = await fetch("http://43.250.40.133:5005/api/v1/categories",{
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${myToken}` 
-        } 
-      });
+        const response = await fetch("http://43.250.40.133:5005/api/v1/categories", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },  
+        });
+ 
+ 
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("Failed to fetch categories:", errorData);
+          return;
+        }
+
         const data = await response.json();
-        
-        if (data) {
-          setCategoryList(data);
+        console.log("Categories API response:", data);
+
+        // Adjust this according to your API response
+        const categories = data?.data?.categories || data?.categories || [];
+
+        if (Array.isArray(categories)) {
+          setCategoryList(categories);
         } else {
-          console.error("Failed to load categories");
+          console.error("Invalid category response format:", data);
         }
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -35,10 +69,15 @@ const myToken = localStorage.getItem("token");
     };
 
     fetchCategories();
-  }, []);
+  }, [token]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!selectedCategory) {
+      alert("Please select a category");
+      return;
+    }
 
     const payload = {
       category: selectedCategory,
@@ -46,14 +85,13 @@ const myToken = localStorage.getItem("token");
       description,
     };
 
-const token = localStorage.getItem("token");
     try {
       setLoading(true);
       const response = await fetch("http://43.250.40.133:5005/api/v1/subcategories", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}` 
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       });
@@ -68,89 +106,126 @@ const token = localStorage.getItem("token");
       }
     } catch (error) {
       console.error("Error submitting subcategory:", error);
-      alert("Error submitting subcategory");
+      alert("Something went wrong");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-      <div className="bg-white w-full max-w-4xl mx-auto rounded shadow-lg p-8">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">Add Subcategory</h2>
-          <button
-            className="text-gray-500 hover:text-red-500 text-lg font-bold"
-            onClick={() => navigate("/categories")}
-          >
-            X
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 gap-6">
-            <div>
-              <label className="block text-sm font-semibold mb-1">Select Department</label>
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                required
-                className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">-- Select Department --</option>
-                {categoryList.map((dept) => (
-                  <option key={dept._id} value={dept._id}>
-                    {dept.name}
+    <Modal show={openModal} size="lg" onClose={onCloseModal} popup>
+      <ModalHeader>
+        <span className="text-lg font-semibold text-gray-900">Add Subcategory</span>
+      </ModalHeader>
+      <ModalBody>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <Label htmlFor="category" value="Select Department" />
+            <Select
+              id="category"
+              required
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            >
+              <option value="">-- Select Department --</option>
+              {categoryList.length > 0 ? (
+                categoryList.map((cat) => (
+                  <option key={cat._id} value={cat._id}>
+                    {cat.name}
                   </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold mb-1">Subcategory Name</label>
-              <input
-                type="text"
-                value={subcategory}
-                onChange={(e) => setSubCategory(e.target.value)}
-                className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter Subcategory Name..."
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold mb-1">Description</label>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="w-full border border-gray-300 px-4 py-2 rounded resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter description..."
-                rows={3}
-              />
-            </div>
+                ))
+              ) : (
+                <option disabled>No categories available</option>
+              )}
+            </Select>
           </div>
 
-          <div className="mt-6 flex justify-center gap-4">
-            <button
+          <div>
+            <Label htmlFor="subcategory" value="Subcategory Name" />
+            <TextInput
+              id="subcategory"
+              placeholder="Enter subcategory name"
+              value={subcategory}
+              onChange={(e) => setSubCategory(e.target.value)}
+              required
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="description" value="Description" />
+            <TextInput
+              id="description"
+              placeholder="Enter description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </div>
+
+          <div className="flex justify-end gap-4">
+            <Button
+              color="gray"
               type="button"
-              onClick={() => navigate("/categories")}
-              className="px-6 py-2 rounded text-gray-700 border border-gray-300 hover:bg-gray-200"
+              onClick={onCloseModal}
               disabled={loading}
             >
               Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-6 py-2 rounded text-gray-700 border border-green-300 hover:bg-green-200"
-              disabled={loading}
-            >
-              {loading ? "Submitting..." : "Submit"}
-            </button>
+            </Button>
+            <Button type="submit" disabled={loading}>
+              {loading ? <Spinner size="sm" /> : "Submit"}
+            </Button>
           </div>
         </form>
-      </div>
-    </div>
+      </ModalBody>
+    </Modal>
   );
 };
 
 export default AddSubCategoryPage;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

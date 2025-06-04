@@ -11,7 +11,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import CategoriesPage from "./components/Categories/CategoriesPage";
 import AddCategoryPage from "./components/Categories/AddCategoryPage";
 import AddSubCategoryPage from "./components/Categories/AddSubCategoryPage";
-
+import EditCategory from "./components/Categories/EditCategory";
+import EditSubCategory from "./components/Categories/EditSubCategory";
 function App() {
   return (
     <>
@@ -34,7 +35,8 @@ function App() {
                       <Route path="/add-category" element={<AddCategoryPage />} />
                        <Route path="/subcategories" element={<AddSubCategoryPage />} />
                       
-                    
+                    <Route path="/edit-category/:id" element={<EditCategory />} />
+                    <Route path="/edit-subcategory/:id" element={<EditSubCategory />} />
                     
                     <Route path="/dashboard/overview" element={<Overview />} />
                     <Route

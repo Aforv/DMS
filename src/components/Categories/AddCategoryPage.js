@@ -1,10 +1,28 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  Button,
+  Label,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  TextInput,
+  Textarea,
+  Spinner,
+} from "flowbite-react";
 
 const AddCategoryPage = () => {
+  const [openModal, setOpenModal] = useState(true);
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
+
+  const onCloseModal = () => {
+    setOpenModal(false);
+    navigate("/categories");
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,6 +33,7 @@ const AddCategoryPage = () => {
     };
 
     try {
+      setLoading(true);
       const response = await fetch("http://43.250.40.133:5005/api/v1/categories", {
         method: "POST",
         headers: {
@@ -23,78 +42,71 @@ const AddCategoryPage = () => {
         body: JSON.stringify(payload),
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to add category");
-      }
-
       const result = await response.json();
-      console.log("Category added:", result);
+     
+      
 
-      // Redirect after success
-      navigate("/categories");
+      if (response.ok) {
+        alert("Category added successfully!");
+        navigate("/categories");
+      } else {
+        alert(result.message || "Failed to add category");
+      }
     } catch (error) {
-      console.error("Error:", error.message);
+      console.error("Error adding category:", error.message);
       alert("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-      <div className="bg-white w-full max-w-4xl mx-auto rounded shadow-lg p-8">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">Add Category</h2>
-          <button
-            className="text-gray-500 hover:text-red-500 text-lg font-bold"
-            onClick={() => navigate("/categories")}
-          >
-            X
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 gap-6">
+    <>
+      <Modal show={openModal} size="lg" onClose={onCloseModal} popup>
+        <ModalHeader>
+          <h3 className="text-lg font-semibold text-gray-900">Add Category</h3>
+        </ModalHeader>
+        <ModalBody>
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-semibold mb-1">Category Name</label>
-              <input
-                type="text"
+              <Label htmlFor="category" value="Category Name" />
+              <TextInput
+                id="category"
+                placeholder="Enter category name"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter Category Name..."
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold mb-1">Description</label>
-              <textarea
+              <Label htmlFor="description" value="Description" />
+              <Textarea
+                id="description"
+                placeholder="Enter description..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full border border-gray-300 px-4 py-2 rounded resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter description..."
                 rows={3}
               />
             </div>
-          </div>
 
-          <div className="mt-6 flex justify-center gap-4">
-            <button
-              type="button"
-              onClick={() => navigate("/categories")}
-              className="px-6 py-2 rounded text-gray-700 border border-gray-300 hover:bg-gray-200"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-6 py-2 rounded text-gray-700 border border-green-300 hover:bg-green-200"
-            >
-              Submit
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+            <div className="flex justify-end gap-4">
+              <Button
+                color="gray"
+                type="button"
+                onClick={onCloseModal}
+                disabled={loading}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={loading}>
+                {loading ? <Spinner size="sm" /> : "Submit"}
+              </Button>
+            </div>
+          </form>
+        </ModalBody>
+      </Modal>
+    </>
   );
 };
 
