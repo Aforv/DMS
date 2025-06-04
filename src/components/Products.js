@@ -5,7 +5,7 @@ import { useState,useEffect } from 'react';
 import axios from 'axios';
 import { Drawer } from 'flowbite-react';
 import { HiSearch } from "react-icons/hi";
-
+import Spinner from './Spinner';
 import ProductsForm from './ProductsForm'
 
 export default function Products() {
@@ -13,6 +13,7 @@ export default function Products() {
   let[Allproducts,setAllproducts]=useState();
   let[editindex,setEditIndex]=useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(false);
   function onCloseModal() {
     setOpenModal(false); 
     setEditIndex(null)
@@ -31,9 +32,13 @@ export default function Products() {
   }
  
 const fetchProducts = () => {
+    setLoading(true);
   axios.get('http://43.250.40.133:5005/api/v1/products?page=1&limit=25&isActive=true')
     .then((res) => {
       setAllproducts(res.data.data);
+    })
+    .finally(() => {
+      setLoading(false);
     });
 };
 
@@ -108,26 +113,11 @@ setEditIndex(index)
 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function handleAddandEdit(){
+setLoading(true);
 let token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzE4M2UzMDRkYWI3NzA4NDE3ZDM1NyIsImlhdCI6MTc0ODg1OTAzMywiZXhwIjoxNzUxNDUxMDMzfQ.pVhO4C-UeQSWP-LrweV-riGTlJv_-iMI1H1KZqE4Q20';
 setOpenModal(false)
+
 const config = {
     headers: {
       Authorization: `Bearer ${token}`
@@ -155,11 +145,13 @@ axios.put(`http://43.250.40.133:5005/api/v1/products/${editElement._id}`,Data,co
     }
     }) 
   }
- 
 )
   .catch(error => {
     console.error('Error:', error);
-  });
+  }).finally(() => {
+        setLoading(false);
+        
+      });
 
 } 
 else{
@@ -184,12 +176,8 @@ else{
   .catch(error => {
     console.error('Error:', error);
   });        
-
 }
-
 }
-
-
 
 function handledelete(id) {
   const token ='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzE4M2UzMDRkYWI3NzA4NDE3ZDM1NyIsImlhdCI6MTc0ODg1OTAzMywiZXhwIjoxNzUxNDUxMDMzfQ.pVhO4C-UeQSWP-LrweV-riGTlJv_-iMI1H1KZqE4Q20'; 
@@ -206,20 +194,14 @@ function handledelete(id) {
   })
   .catch(error => {
     console.error(error);
-  });
+  }).finally(() => {
+    setLoading(false);  
+      });
 }
 
-
-
-
-
-
-
-
-
-  
   return (
     <div> 
+      {loading && <Spinner />}
 <div className="flex justify-between items-center mb-4 flex-wrap gap-4">
   <div className="flex items-center gap-2">
     <TextInput
@@ -244,18 +226,6 @@ function handledelete(id) {
     </button>
   </div>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
 
      <div>
       <ProductsForm  products={Allproducts}
