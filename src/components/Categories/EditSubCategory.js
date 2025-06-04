@@ -1,49 +1,49 @@
 import { useState, useEffect } from "react";
+import {
+  Modal,
+  ModalHeader,
+  ModalBody,
+  Button,
+  TextInput,
+  Label,
+} from "flowbite-react";
 
-const EditSubCategory = ({ subcategoryId }) => {
+const EditSubCategory = ({ subcategoryId, openModal, setOpenModal }) => {
   const [subcategoryData, setSubcategoryData] = useState({
     name: "",
-    _id: "",
     description: "",
   });
-
-  const [editing, setEditing] = useState(false);
   const [popupMessage, setPopupMessage] = useState(null);
+
   const myToken = localStorage.getItem("token");
 
   useEffect(() => {
     if (!subcategoryId) return;
 
-    // ✅ Keep all fields, don't drop `description`
-    setSubcategoryData({ name: "", _id: "", description: "" });
-
     const fetchSubcategory = async () => {
       try {
-        const response = await fetch("http://43.250.40.133:5005/api/v1/subcategories", {
-          headers: {
-            Authorization: `Bearer ${myToken}`,
-          },
-        });
+        const response = await fetch(
+          "http://43.250.40.133:5005/api/v1/subcategories",
+          {
+            headers: {
+              Authorization: `Bearer ${myToken}`,
+            },
+          }
+        );
 
         if (response.ok) {
           const data = await response.json();
+          const found = Array.isArray(data)
+            ? data.find((item) => item._id === subcategoryId)
+            : null;
 
-          // ✅ Defensive: Ensure data is an array before using `.find()`
-          if (Array.isArray(data)) {
-            const found = data.find((item) => item._id === subcategoryId);
-
-            if (found) {
-              setSubcategoryData({
-                name: found.name || "",
-                _id: found._id || "",
-                description: found.description || "",
-              });
-            } else {
-              console.warn("Subcategory not found!");
-              setPopupMessage("Subcategory not found.");
-            }
+          if (found) {
+            setSubcategoryData({
+              name: found.name,
+              description: found.description,
+            });
           } else {
-            setPopupMessage("Invalid data format from API.");
+            setPopupMessage("Subcategory not found.");
           }
         } else {
           setPopupMessage("Failed to load subcategories");
@@ -58,7 +58,7 @@ const EditSubCategory = ({ subcategoryId }) => {
 
   const handleUpdate = async () => {
     if (!subcategoryId) {
-      setPopupMessage("Subcategory ID is missing. Cannot update.");
+      setPopupMessage("Subcategory ID is missing.");
       return;
     }
 
@@ -69,18 +69,15 @@ const EditSubCategory = ({ subcategoryId }) => {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${myToken}`, // ✅ include token for auth
+            Authorization: `Bearer ${myToken}`,
           },
-          body: JSON.stringify({
-            name: subcategoryData.name,
-            description: subcategoryData.description,
-          }),
+          body: JSON.stringify(subcategoryData),
         }
       );
 
       if (response.ok) {
         setPopupMessage("Subcategory updated successfully");
-        setEditing(false);
+        setOpenModal(false);
       } else {
         const error = await response.json();
         setPopupMessage("Update failed: " + error.message);
@@ -90,64 +87,71 @@ const EditSubCategory = ({ subcategoryId }) => {
     }
   };
 
-  return (
-    <div className="p-4 bg-white rounded shadow max-w-sm mx-auto">
-      {popupMessage && (
-        <div className="mb-4 p-3 rounded bg-green-100 text-green-800 shadow border border-green-300">
-          {popupMessage}
-          <button
-            className="float-right font-bold ml-2"
-            onClick={() => setPopupMessage(null)}
-          >
-            ×
-          </button>
-        </div>
-      )}
+  const onCloseModal = () => {
+    setOpenModal(false);
+  };
 
-      {!editing ? (
-        <button
-          className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
-          onClick={() => setEditing(true)}
-        >
-          Edit
-        </button>
-      ) : (
-        <div className="space-y-3">
-          <input
-            type="text"
-            value={subcategoryData.name}
-            placeholder="Enter Subcategory Name"
-            onChange={(e) =>
-              setSubcategoryData({ ...subcategoryData, name: e.target.value })
-            }
-            className="w-full p-2 border rounded"
-          />
-          <input
-            type="text"
-            value={subcategoryData.description}
-            placeholder="Enter Subcategory Description"
-            onChange={(e) =>
-              setSubcategoryData({ ...subcategoryData, description: e.target.value })
-            }
-            className="w-full p-2 border rounded"
-          />
+  return (
+    <Modal show={openModal} size="md" onClose={onCloseModal} popup>
+      <ModalHeader />
+      <ModalBody>
+        <div className="space-y-6">
+          <h3 className="text-xl font-medium text-gray-900 dark:text-white">
+            Edit Subcategory
+          </h3>
+
+          {popupMessage && (
+            <div className="p-3 rounded bg-green-100 text-green-800 border border-green-300">
+              {popupMessage}
+              <button
+                className="float-right font-bold ml-2"
+                onClick={() => setPopupMessage(null)}
+              >
+                ×
+              </button>
+            </div>
+          )}
+
+          <div>
+            <Label htmlFor="subcategory-name">Subcategory Name</Label>
+            <TextInput
+              id="subcategory-name"
+              placeholder="Enter name"
+              value={subcategoryData.name}
+              onChange={(e) =>
+                setSubcategoryData({ ...subcategoryData, name: e.target.value })
+              }
+              required
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="subcategory-desc">Description</Label>
+            <TextInput
+              id="subcategory-desc"
+              placeholder="Enter description"
+              value={subcategoryData.description}
+              onChange={(e) =>
+                setSubcategoryData({
+                  ...subcategoryData,
+                  description: e.target.value,
+                })
+              }
+              required
+            />
+          </div>
+
           <div className="flex justify-between">
-            <button
-              onClick={handleUpdate}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-            >
+            <Button color="blue" onClick={handleUpdate}>
               Save
-            </button>
-            <button
-              onClick={() => setEditing(false)}
-              className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-            >
+            </Button>
+            <Button color="gray" onClick={onCloseModal}>
               Cancel
-            </button>
+            </Button>
           </div>
         </div>
-      )}
-    </div>
+      </ModalBody>
+    </Modal>
   );
 };
 

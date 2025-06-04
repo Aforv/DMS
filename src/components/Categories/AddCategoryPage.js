@@ -1,15 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Button,
-  Label,
-  Modal,
-  ModalBody,
-  ModalHeader,
-  TextInput,
-  Textarea,
-  Spinner,
-} from "flowbite-react";
 
 const AddCategoryPage = () => {
   const [openModal, setOpenModal] = useState(true);
@@ -43,8 +33,6 @@ const AddCategoryPage = () => {
       });
 
       const result = await response.json();
-     
-      
 
       if (response.ok) {
         alert("Category added successfully!");
@@ -61,17 +49,27 @@ const AddCategoryPage = () => {
   };
 
   return (
-    <>
-      <Modal show={openModal} size="lg" onClose={onCloseModal} popup>
-        <ModalHeader>
-          <h3 className="text-lg font-semibold text-gray-900">Add Category</h3>
-        </ModalHeader>
-        <ModalBody>
-          <form onSubmit={handleSubmit} className="space-y-5">
+    openModal && (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-end z-50">
+        <div className="bg-white w-full max-w-md h-full overflow-y-auto shadow-xl p-6">
+          <div className="flex justify-between items-center border-b pb-4 mb-6">
+            <h2 className="text-xl font-semibold text-gray-800">Add Category</h2>
+            <button
+              onClick={onCloseModal}
+              className="text-gray-500 hover:text-gray-800 text-2xl"
+            >
+              &times;
+            </button>
+          </div>
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="category" value="Category Name" />
-              <TextInput
+              <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
+                Category Name
+              </label>
+              <input
+                type="text"
                 id="category"
+                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 placeholder="Enter category name"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
@@ -80,33 +78,40 @@ const AddCategoryPage = () => {
             </div>
 
             <div>
-              <Label htmlFor="description" value="Description" />
-              <Textarea
+              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+                Description
+              </label>
+              <textarea
                 id="description"
+                rows="3"
+                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 placeholder="Enter description..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                rows={3}
               />
             </div>
 
             <div className="flex justify-end gap-4">
-              <Button
-                color="gray"
+              <button
                 type="button"
                 onClick={onCloseModal}
                 disabled={loading}
+                className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-100 transition"
               >
                 Cancel
-              </Button>
-              <Button type="submit" disabled={loading}>
-                {loading ? <Spinner size="sm" /> : "Submit"}
-              </Button>
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition"
+              >
+                {loading ? "Submitting..." : "Create Category"}
+              </button>
             </div>
           </form>
-        </ModalBody>
-      </Modal>
-    </>
+        </div>
+      </div>
+    )
   );
 };
 
