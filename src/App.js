@@ -9,6 +9,7 @@ import Monthly from "./components/Dashboard/Reports/Monthly";
 import Login from "./components/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Inventory from "./components/inventory/Inventory";
+import DataTableWithMenu from "./components/inventory/DataTableWithFlowbite";
 
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
                       element={<Monthly />}
                     />
                     <Route path = "/inventory" element = {<Inventory/>}/>
+                    {/* <Route path = "/inventory" element = {<DataTableWithMenu/>}/> */}
                     {/* Add more protected routes here */}
                   </Routes>
                   </div>

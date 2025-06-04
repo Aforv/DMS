@@ -9,6 +9,8 @@ import {
 } from "flowbite-react";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import DataTableWithMenu from "./DataTableWithFlowbite";
+import { HiSearch } from "react-icons/hi";
 
 function Inventory() {
   const [openModal, setOpenModal] = useState(false);
@@ -28,6 +30,7 @@ function Inventory() {
   const [searchTerm, setSearchTerm] = useState("");
   const [editIndex, setEditIndex] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
+  const [products, setProducts] = useState([]);
 
   const axiosConfig = () => ({
     headers: {
@@ -49,36 +52,52 @@ function Inventory() {
     }
   };
 
+  const fetchProducts = async () => {
+    try {
+      const res = await axios.get(
+        "http://43.250.40.133:5005/api/v1/products",
+        axiosConfig()
+      );
+      if (res.data?.data) {
+        setProducts(res.data.data);
+      }
+    } catch (err) {
+      console.error("Error fetching products:", err);
+    }
+  };
+
   useEffect(() => {
     fetchData();
+    fetchProducts();
   }, []);
 
   const validate = () => {
     let tempErrors = {};
 
-   if (
-    !formData.product || 
-    (typeof formData.product === "string" && formData.product.trim() === "") ||
-    (typeof formData.product === "object" && !formData.product.name)
-  ) {
-    tempErrors.product = "Product is required";
-  }
+    if (!formData.product || formData.product.trim() === "") {
+      tempErrors.product = "Product is required";
+    }
+
     if (!formData.batchNumber || formData.batchNumber.trim() === "") {
       tempErrors.batchNumber = "Batch Number is required";
     }
+
     if (!formData.quantity) {
       tempErrors.quantity = "Quantity is required";
     } else if (isNaN(formData.quantity) || Number(formData.quantity) <= 0) {
       tempErrors.quantity = "Quantity must be a positive number";
     }
+
     if (!formData.location || formData.location.trim() === "") {
       tempErrors.location = "Location is required";
     }
+
     if (!formData.dpValue) {
       tempErrors.dpValue = "DpValue is required";
     } else if (isNaN(formData.dpValue) || Number(formData.dpValue) <= 0) {
       tempErrors.dpValue = "DpValue must be a positive number";
     }
+
     if (!formData.expiryDate) {
       tempErrors.expiryDate = "Expiry Date is required";
     } else {
@@ -89,9 +108,7 @@ function Inventory() {
       }
     }
 
-
     setErrors(tempErrors);
-
     return Object.keys(tempErrors).length === 0;
   };
 
@@ -105,29 +122,43 @@ function Inventory() {
 
     if (!validate()) return;
 
+    const matchedProduct = products.find(
+      (p) => p.name.toLowerCase() === formData.product.toLowerCase()
+    );
+
+    if (!matchedProduct) {
+      alert("Product not found. Please enter a valid product name.");
+      return;
+    }
+
+    const payload = {
+      ...formData,
+      product: matchedProduct._id,
+    };
+
     try {
-      if (isEdit && editIndex !== null) {
+      if (isEdit && formData._id) {
         await axios.put(
           `http://43.250.40.133:5005/api/v1/inventory/${formData._id}`,
-          formData,
+          payload,
           axiosConfig()
         );
         alert("Inventory updated successfully!");
       } else {
         await axios.post(
           "http://43.250.40.133:5005/api/v1/inventory",
-          formData,
+          payload,
           axiosConfig()
         );
         alert("Inventory added successfully!");
       }
-      await fetchData();
-    } catch (error) {
-      console.error("Error submitting inventory data:", error);
-      alert("Something went wrong. Please try again.");
-    }
 
-    resetForm();
+      fetchData();
+      resetForm();
+    } catch (error) {
+      console.error("Error submitting form:", error.response?.data || error);
+      alert("Failed to submit inventory.");
+    }
   };
 
   const resetForm = () => {
@@ -163,11 +194,11 @@ function Inventory() {
     return valuesToSearch.includes(searchTerm.toLowerCase());
   });
 
-  const editItem = (index) => {
-    const item = dataList[index];
+  const editItem = (item) => {
+    if (!item) return;
     setFormData({
       _id: item._id,
-      product: item.product || "",
+      product: item.product?.name || "",
       batchNumber: item.batchNumber || "",
       quantity: item.quantity || "",
       location: item.location || "",
@@ -175,7 +206,6 @@ function Inventory() {
       expiryDate: item.expiryDate || "",
       notes: item.notes || "",
     });
-    setEditIndex(index);
     setIsEdit(true);
     setOpenModal(true);
     setErrors({});
@@ -189,11 +219,12 @@ function Inventory() {
         </h1>
       </div>
 
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center ">
         <div className="w-full max-w-[200px]">
           <TextInput
+            icon={HiSearch}
             type="text"
-            placeholder="Search"
+            placeholder="Search inventory..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -244,7 +275,9 @@ function Inventory() {
                   color={errors.batchNumber ? "failure" : "gray"}
                 />
                 {errors.batchNumber && (
-                  <p className="text-red-600 text-sm mt-1">{errors.batchNumber}</p>
+                  <p className="text-red-600 text-sm mt-1">
+                    {errors.batchNumber}
+                  </p>
                 )}
               </div>
 
@@ -311,7 +344,9 @@ function Inventory() {
                   color={errors.expiryDate ? "failure" : "gray"}
                 />
                 {errors.expiryDate && (
-                  <p className="text-red-600 text-sm mt-1">{errors.expiryDate}</p>
+                  <p className="text-red-600 text-sm mt-1">
+                    {errors.expiryDate}
+                  </p>
                 )}
               </div>
 
@@ -344,57 +379,7 @@ function Inventory() {
         </div>
       </Drawer>
 
-      <div className="relative overflow-x-auto shadow-md sm:rounded-lg mt-6">
-        <table className="w-full text-sm text-left text-gray-1000">
-          <thead className="text-xs text-gray-700 uppercase bg-blue-100">
-            <tr>
-              <th className="px-6 py-3">Sl.No</th>
-              <th className="px-6 py-3">Product</th>
-              <th className="px-6 py-3">Batch No</th>
-              <th className="px-6 py-3">Quantity</th>
-              <th className="px-6 py-3">Location</th>
-              <th className="px-6 py-3">DpValue</th>
-              <th className="px-6 py-3">Expiry Date</th>
-              <th className="px-6 py-3">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredList.length > 0 ? (
-              filteredList.map((item, index) => (
-                <tr
-                  key={item._id || item.id}
-                  className="bg-white border-b hover:bg-gray-50"
-                >
-                  <td className="px-6 py-4">{index + 1}</td>
-                  <td className="px-3 py-2">{item.product?.name}</td>
-                  <td className="px-6 py-4">{item.batchNumber}</td>
-                  <td className="px-6 py-4">{item.quantity}</td>
-                  <td className="px-6 py-4">{item.location}</td>
-                  <td className="px-6 py-4">{item.dpValue}</td>
-                  <td className="px-6 py-4">{item.expiryDate}</td>
-                  <td className="px-6 py-4">
-                    <div className="flex justify-center gap-2">
-                      <Button size="xs" onClick={() => editItem(index)}>
-                        <PencilSquareIcon className="h-4 w-4 mr-1" />
-                        Edit
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td
-                  colSpan="9"
-                  className="px-6 py-4 text-center text-gray-500"
-                >
-                  No inventory data available.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+      <DataTableWithMenu data={filteredList} onEdit={editItem} />
     </>
   );
 }
