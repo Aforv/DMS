@@ -58,13 +58,12 @@ const DeleteHospitalConfirmation = ({
   };
 
   return (
-<div className="fixed inset-0 z-50 flex justify-end align-center bg-black bg-opacity-40 items-center">
+<div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 border-radius">
   <div
-    className={`bg-white w-full sm:max-w-md shadow-xl transition-transform duration-2000 ease-in-out ${
+    className={`bg-white w-full rounded-2xl
+      sm:max-w-md shadow-xl transition-transform duration-2000 ease-in-out ${
       isOpen ? "translate-x-0" : "translate-x-full"
-    }`}
-     style={{ height: "35vh", borderRadius: "10px"  }}
-  >
+    }`}  >
     <div className="p-6 ">
       <h2 className="text-lg font-semibold text-red-600 mb-4">Confirm Deletion</h2>
       <p className="mb-6 text-gray-800">

@@ -70,7 +70,6 @@ const EditHospitalForm = ({ show, onClose, hospital, onUpdate }) => {
         className={`relative bg-white w-full sm:max-w-md h-full shadow-xl transform transition-transform duration-2000 ease-in-out ${
         show ? "translate-x-0" : "translate-x-full"
         }`}
-        style={{ height: "80vh", borderRadius: "10px" }}
       >
         <div className="p-6">
           <h3 className="text-xl font-semibold mb-4 text-gray-800">

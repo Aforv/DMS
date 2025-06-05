@@ -145,6 +145,42 @@ const HospitalTable = () => {
     },
   ];
 
+  const handleExport = () => {
+  const dataToExport = filteredData.map((hospital, index) => ({
+    "SL.NO": index + 1,
+    Name: hospital.name || "",
+    Email: hospital.email || "",
+    Phone: hospital.phone || "",
+    Address: `${hospital.address || ""}, ${hospital.location || ""}, ${hospital.city || ""}, ${hospital.state || ""} - ${hospital.pincode || ""}`,
+    Status: hospital.isActive ? "Active" : "Inactive",
+  }));
+
+  if (dataToExport.length === 0) {
+    alert("No data available to export.");
+    return;
+  }
+
+  const headers = Object.keys(dataToExport[0]);
+  const csvRows = [headers.join(",")];
+
+  for (const row of dataToExport) {
+    const values = headers.map(header => `"${row[header]}"`);
+    csvRows.push(values.join(","));
+  }
+
+  const csvContent = csvRows.join("\n");
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", "hospital_list.csv");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+
   return (
     <div className="p-6 bg-white rounded-lg border border-gray-200 shadow-md">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-4">
@@ -158,18 +194,19 @@ const HospitalTable = () => {
           />
         </div>
 
+        <div className="text-3xl font-semibold text-blue-800 mb-4 text-center">Hospital List</div>
         <div className="flex items-center gap-3">
           <Dropdown label="Actions">
-            <Dropdown.Item>Export</Dropdown.Item>
+            <Dropdown.Item onClick={handleExport}>Export</Dropdown.Item>
             <Dropdown.Item>Import</Dropdown.Item>
           </Dropdown>
-
-          <button
+           <button
             onClick={() => setShowModal(true)}
             className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md shadow transition duration-200"
           >
             Add Hospital
           </button>
+
         </div>
       </div>
 
@@ -180,7 +217,6 @@ const HospitalTable = () => {
       )}
 
       <DataTable
-        title={<span className="text-lg font-semibold text-gray-800">Hospital List</span>}
         columns={columns}
         data={filteredData}
         pagination

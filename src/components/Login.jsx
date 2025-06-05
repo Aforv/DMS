@@ -24,7 +24,7 @@ export default function Login() {
       setError(res.message);
     }
   };
-
+  
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100 dark:bg-gray-900">
       <form
