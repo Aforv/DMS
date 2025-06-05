@@ -1,12 +1,15 @@
 import React from 'react'
 import { Label,TextInput } from "flowbite-react";
-import { Button } from "flowbite-react";
+import { Button,Select } from "flowbite-react";
 import { useState,useEffect } from 'react';
 import axios from 'axios';
 import { Drawer } from 'flowbite-react';
 import { HiSearch } from "react-icons/hi";
 import Spinner from './Spinner';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 import ProductsForm from './ProductsForm'
+import { HiX } from "react-icons/hi";
 
 export default function Products() {
   const [openModal, setOpenModal] = useState(false);
@@ -42,8 +45,6 @@ const fetchProducts = () => {
     });
 };
 
-
-
  useEffect(()=>{
   fetchProducts()
  },[])
@@ -62,9 +63,6 @@ let [Data,setData]=useState({
       location: ""
     }
 });
-
-
-
 
 
 function handlechange(e) {
@@ -198,6 +196,28 @@ function handledelete(id) {
     setLoading(false);  
       });
 }
+function handleExportToExcel() {
+ if(!Allproducts||Allproducts.length==0) return;
+     const ecxeldata=Allproducts.map((elem,index)=>({
+      Sno:index+1,
+      SupplierName:elem.name,
+      productCode:elem.productCode,
+      Principle:elem.principle.name||'',
+      DP:elem.dpValue,
+      MRP:elem.mrp,
+      Description:elem.description,
+      Quantity:elem.quantity,
+     }));
+  const worksheet = XLSX.utils.json_to_sheet(ecxeldata);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Products");
+
+  const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+  const data = new Blob([excelBuffer], { type: "application/octet-stream" });
+
+  saveAs(data, "Products.xlsx");
+
+ }
 
   return (
     <div> 
@@ -221,7 +241,7 @@ function handledelete(id) {
     <button className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" onClick={()=>{setOpenModal(true)}}>
       Add Product
     </button>
-    <button className="focus:outline-none text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+    <button className="focus:outline-none text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800" onClick={()=>handleExportToExcel()}>
       Export to Excel
     </button>
   </div>
@@ -236,14 +256,16 @@ function handledelete(id) {
    </div>
 
 <Drawer open={openModal} onClose={onCloseModal} className="w-[90vw] max-w-[60vw]" position="right">
-   <div className="w-full sm:w-[80vw] md:w-[70vw] lg:w-[60vw] xl:w-[50vw] max-w-full h-screen">
+  <div className="w-full h-screen overflow-y-auto p-4">
     <div className="flex justify-between items-center border-b pb-4">
       <h2 className="text-xl font-bold text-gray-900 dark:text-white">Add Products</h2>
-      <Button onClick={onCloseModal} color="gray">Close</Button>
+        <button onClick={onCloseModal} className="text-gray-500 hover:text-gray-900 dark:hover:text-white">
+    <HiX className="w-6 h-6" />
+  </button>
     </div>
 
-    <div className="grid grid-cols-1 mb-10 sm:grid-cols-3 gap-6">
-      <div>
+    <div className="flex flex-wrap gap-4 my-6">
+      <div className="flex-1 min-w-[200px]">
         <Label htmlFor="name" className="mb-1 block">Supplier Name</Label>
         <TextInput
           id="name"
@@ -254,8 +276,7 @@ function handledelete(id) {
           required
         />
       </div>
-
-      <div>
+      <div className="flex-1 min-w-[200px]">
         <Label htmlFor="productCode" className="mb-1 block">Product Code</Label>
         <TextInput
           id="productCode"
@@ -264,23 +285,44 @@ function handledelete(id) {
           value={Data.productCode}
           placeholder="Enter Product Code..."
           required
-        /> 
-      </div>
-
-      <div>
-        <Label htmlFor="principle" className="mb-1 block">Principle ID</Label>
-        <TextInput
-          id="principle"
-          name="principle"
-          onChange={handlechange}
-          value={Data.principle}
-          placeholder="Enter Principle ID..."
         />
       </div>
     </div>
 
-    <div className="grid grid-cols-1 mb-10 sm:grid-cols-3 gap-4">
-      <div>
+    
+    <div className="flex flex-wrap gap-4 mb-6">
+      <div className="flex-1 min-w-[200px]">
+<Label htmlFor="principle" className="mb-1 block">Principle ID</Label>
+<Select
+  id="principle"
+  name="principle"
+  value={Data.principle}
+  onChange={handlechange}
+  required
+>
+  <option value="">Select Principle</option>
+  <option value="683467f1fd53184442ee1ba8">Product ID 1</option>
+</Select>
+      </div>
+      <div className="flex-1 min-w-[200px]">
+        <Label htmlFor="description" className="mb-1 block">Description</Label>
+        <input
+          type="text"
+          id="description"
+          name="description"
+          value={Data.description}
+          onChange={handlechange}
+          placeholder="Enter description..."
+          className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 
+                     focus:ring-blue-500 focus:border-blue-500 
+                     dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+        />
+      </div>
+    </div>
+
+
+    <div className="flex flex-wrap gap-4 mb-6">
+      <div className="flex-1 min-w-[200px]">
         <Label htmlFor="DP" className="mb-1 block">DP</Label>
         <input
           type="number"
@@ -295,23 +337,7 @@ function handledelete(id) {
                      dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
         />
       </div>
-
-      <div>
-        <Label htmlFor="description" className="mb-1 block">Description</Label>
-        <input
-          type="text"
-          id="description"
-          name="description"
-          value={Data.description}
-          onChange={handlechange}
-          placeholder="Enter description..."
-          className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 
-                     focus:ring-blue-500 focus:border-blue-500 
-                     dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-        />
-      </div>
-
-      <div>
+      <div className="flex-1 min-w-[200px]">
         <Label htmlFor="MRP" className="mb-1 block">MRP</Label>
         <input
           type="number"
@@ -328,9 +354,9 @@ function handledelete(id) {
       </div>
     </div>
 
-
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <div>
+ 
+    <div className="flex flex-wrap gap-4 mb-6">
+      <div className="flex-1 min-w-[200px]">
         <Label htmlFor="Quantity" className="mb-1 block">Quantity</Label>
         <input
           type="number"
@@ -345,8 +371,7 @@ function handledelete(id) {
                      dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
         />
       </div>
-
-      <div>
+  <div className="flex-1 min-w-[200px]">
         <Label htmlFor="Location" className="mb-1 block">Location</Label>
         <input
           type="text"
@@ -361,22 +386,14 @@ function handledelete(id) {
                      dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
         />
       </div>
-    </div>
-
-   
-    <div className="flex justify-center pt-6">
-      <Button className="text-green-400" color="green" onClick={() =>handleAddandEdit()}>
-        {editindex!=null?"Update":"ADD"}
+    </div>    
+ <div className="flex justify-center pt-4">
+      <Button className="text-green-400" color="green" onClick={handleAddandEdit}>
+        {editindex != null ? "Update" : "ADD"}
       </Button>
     </div>
   </div>
 </Drawer>
-
-
-
-
-
-
     </div>
   )
 }
