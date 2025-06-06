@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Snackbar } from "@mui/material";
 
 const AddCategoryPage = () => {
   const [openModal, setOpenModal] = useState(true);
@@ -7,11 +8,25 @@ const AddCategoryPage = () => {
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const vertical = "bottom";
+  const horizontal = "right";
+
   const navigate = useNavigate();
 
   const onCloseModal = () => {
     setOpenModal(false);
     navigate("/categories");
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
+  const showSnackbar = (message) => {
+    setSnackbarMessage(message);
+    setSnackbarOpen(true);
   };
 
   const handleSubmit = async (e) => {
@@ -35,14 +50,14 @@ const AddCategoryPage = () => {
       const result = await response.json();
 
       if (response.ok) {
-        alert("Category added successfully!");
-        navigate("/categories");
+        showSnackbar("✅ Category added successfully!");
+        setTimeout(() => navigate("/categories"), 1500); // Delay to let user see snackbar
       } else {
-        alert(result.message || "Failed to add category");
+        showSnackbar(result.message || "❌ Failed to add category");
       }
     } catch (error) {
       console.error("Error adding category:", error.message);
-      alert("Something went wrong. Please try again.");
+      showSnackbar("❌ Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -109,6 +124,16 @@ const AddCategoryPage = () => {
               </button>
             </div>
           </form>
+
+          {/* Snackbar Component */}
+          <Snackbar
+            anchorOrigin={{ vertical, horizontal }}
+            open={snackbarOpen}
+            onClose={handleSnackbarClose}
+            message={snackbarMessage}
+            autoHideDuration={3000}
+            key={vertical + horizontal}
+          />
         </div>
       </div>
     )

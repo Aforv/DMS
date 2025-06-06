@@ -1,5 +1,5 @@
 
-import {  Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
 import ProfilePage from "./components/ProfilePage";
 import Layout from "./navigation/Layout";
@@ -16,28 +16,28 @@ import EditSubCategory from "./components/Categories/EditSubCategory";
 function App() {
   return (
     <>
-        <Routes>
-          <Route
-            path="/login"
-            element={<Login />}
-          />
+      <Routes>
+        <Route
+          path="/login"
+          element={<Login />}
+        />
 
-          <Route
-            path="/*"
-            element={
-              <ProtectedRoute>
-                <Layout>
-                   <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-5"> 
+        <Route
+          path="/*"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-5">
                   <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/categories" element={<CategoriesPage />} />
-                      <Route path="/add-category" element={<AddCategoryPage />} />
-                       <Route path="/subcategories" element={<AddSubCategoryPage />} />
-                      
+                    <Route path="/add-category" element={<AddCategoryPage />} />
+                    <Route path="/subcategories" element={<AddSubCategoryPage />} />
+
                     <Route path="/edit-category/:id" element={<EditCategory />} />
                     <Route path="/edit-subcategory/:id" element={<EditSubCategory />} />
-                    
+
                     <Route path="/dashboard/overview" element={<Overview />} />
                     <Route
                       path="/dashboard/reports/daily"
@@ -49,13 +49,13 @@ function App() {
                     />
                     {/* Add more protected routes here */}
                   </Routes>
-                  </div>
-                </Layout>
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-    
+                </div>
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+
     </>
   );
 }

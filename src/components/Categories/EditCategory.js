@@ -2,6 +2,7 @@ import { Button, Label, TextInput } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { HiOutlineX } from "react-icons/hi";
+import Snackbar from "@mui/material/Snackbar"; // ✅ Add this
 import axios from "axios";
 
 const EditCategory = () => {
@@ -16,10 +17,21 @@ const EditCategory = () => {
     description: "",
   });
 
+  // ✅ Snackbar states
+  const [snackOpen, setSnackOpen] = useState(false);
+  const [snackMessage, setSnackMessage] = useState("");
+  const vertical = "bottom";
+  const horizontal = "center";
+
   // Close Drawer and navigate back
   const closeDrawer = () => {
     setOpenDrawer(false);
     navigate(-1);
+  };
+
+  // ✅ Snackbar handler
+  const handleSnackbarClose = () => {
+    setSnackOpen(false);
   };
 
   // Fetch category details
@@ -32,17 +44,15 @@ const EditCategory = () => {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        console.log("Fetched category data:", data.data);
-        
-       console.log(data);
-  
+
         setCategoryData({
           category: data.data.name || "",
           description: data.data.description || "",
         });
       } catch (error) {
         console.error("Error fetching category:", error);
-        alert("Failed to load category");
+        setSnackMessage("Failed to load category");
+        setSnackOpen(true);
         navigate("/categories");
       } finally {
         setLoading(false);
@@ -52,21 +62,17 @@ const EditCategory = () => {
     fetchCategory();
   }, [id, token, navigate]);
 
-  // Handle input change
-  
-  
   const handleChange = (e) => {
-    console.log("Category data before change:", categoryData.name, categoryData.description);
     const { name, value } = e.target;
     setCategoryData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Submit updated category
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!categoryData.category.trim()) {
-      alert("Category name is required");
+      setSnackMessage("Category name is required");
+      setSnackOpen(true);
       return;
     }
 
@@ -85,11 +91,17 @@ const EditCategory = () => {
         }
       );
 
-      alert("Category updated successfully!");
-      navigate("/categories");
+      setSnackMessage("Category updated successfully!");
+      setSnackOpen(true);
+
+      // Navigate after a short delay so user can read message
+      setTimeout(() => {
+        navigate("/categories");
+      }, 1500);
     } catch (error) {
       console.error("Update failed:", error);
-      alert("Error updating category");
+      setSnackMessage("Error updating category");
+      setSnackOpen(true);
     }
   };
 
@@ -99,51 +111,63 @@ const EditCategory = () => {
 
   return (
     openDrawer && (
-      <div className="fixed inset-0 z-50 flex justify-end bg-black bg-opacity-30">
-        <div className="w-full max-w-md bg-white h-full shadow-lg p-6 overflow-y-auto">
-          {/* Header */}
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xl font-semibold text-gray-800">Edit Category</h3>
-            <button onClick={closeDrawer}>
-              <HiOutlineX className="w-6 h-6 text-gray-600 hover:text-red-500" />
-            </button>
+      <>
+        <div className="fixed inset-0 z-50 flex justify-end bg-black bg-opacity-30">
+          <div className="w-full max-w-md bg-white h-full shadow-lg p-6 overflow-y-auto">
+            {/* Header */}
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-semibold text-gray-800">Edit Category</h3>
+              <button onClick={closeDrawer}>
+                <HiOutlineX className="w-6 h-6 text-gray-600 hover:text-red-500" />
+              </button>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div>
+                <Label htmlFor="category" value="Category" />
+                <TextInput
+                  id="category"
+                  name="category"
+                  value={categoryData.category}
+                  onChange={handleChange}
+                  placeholder="Enter category name"
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="description" value="Description" />
+                <TextInput
+                  id="description"
+                  name="description"
+                  value={categoryData.description}
+                  onChange={handleChange}
+                  placeholder="Enter description"
+                  required
+                />
+              </div>
+
+              <div className="flex justify-between mt-4">
+                <Button color="gray" onClick={closeDrawer} type="button">
+                  Cancel
+                </Button>
+                <Button type="submit">Update</Button>
+              </div>
+            </form>
           </div>
-
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <Label htmlFor="category" value="Category" />
-              <TextInput
-                id="category"
-                name="category"
-                value={categoryData.category}
-                onChange={handleChange}
-                placeholder="Enter category name"
-                required
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="description" value="Description" />
-              <TextInput
-                id="description"
-                name="description"
-                value={categoryData.description}
-                onChange={handleChange}
-                placeholder="Enter description"
-                required
-              />
-            </div>
-
-            <div className="flex justify-between mt-4">
-              <Button color="gray" onClick={closeDrawer} type="button">
-                Cancel
-              </Button>
-              <Button type="submit">Update</Button>
-            </div>
-          </form>
         </div>
-      </div>
+
+        {/* ✅ Snackbar */}
+        <Snackbar
+          anchorOrigin={{ vertical, horizontal }}
+          open={snackOpen}
+          onClose={handleSnackbarClose}
+          message={snackMessage}
+          autoHideDuration={3000}
+          key={vertical + horizontal}
+        />
+      </>
     )
   );
 };

@@ -1,9 +1,8 @@
-
-
 import { Button, Label, TextInput } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { HiOutlineX } from "react-icons/hi";
+import Snackbar from "@mui/material/Snackbar"; // <-- import from MUI
 import axios from "axios";
 
 const EditSubCategory = () => {
@@ -17,6 +16,21 @@ const EditSubCategory = () => {
     subcategory: "",
     description: "",
   });
+
+  // Snackbar States
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackMessage, setSnackMessage] = useState("");
+  const vertical = "bottom";
+  const horizontal = "center";
+
+  const showSnackbar = (message) => {
+    setSnackMessage(message);
+    setOpenSnackbar(true);
+  };
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
 
   const closeDrawer = () => {
     setOpenDrawer(false);
@@ -33,7 +47,7 @@ const EditSubCategory = () => {
           }
         );
 
-        console.log("Fetched subcategory edit  data:", data.data);
+        console.log("Fetched subcategory edit data:", data.data);
 
         setSubCategoryData({
           subcategory: data.data.name || "",
@@ -41,7 +55,7 @@ const EditSubCategory = () => {
         });
       } catch (error) {
         console.error("Error fetching subcategory:", error);
-        alert("Failed to load subcategory");
+        showSnackbar("Failed to load subcategory");
         navigate("/categories");
       } finally {
         setLoading(false);
@@ -60,7 +74,7 @@ const EditSubCategory = () => {
     e.preventDefault();
 
     if (!subCategoryData.subcategory.trim()) {
-      alert("Subcategory name is required");
+      showSnackbar("Subcategory name is required");
       return;
     }
 
@@ -79,11 +93,13 @@ const EditSubCategory = () => {
         }
       );
 
-      alert("Subcategory updated successfully!");
-      navigate("/categories");
+      showSnackbar("Subcategory updated successfully!");
+      setTimeout(() => {
+        navigate("/categories");
+      }, 1500);
     } catch (error) {
       console.error("Update failed:", error);
-      alert("Error updating subcategory");
+      showSnackbar("Error updating subcategory");
     }
   };
 
@@ -93,49 +109,61 @@ const EditSubCategory = () => {
 
   return (
     openDrawer && (
-      <div className="fixed inset-0 z-50 flex justify-end bg-black bg-opacity-30">
-        <div className="w-full max-w-md bg-white h-full shadow-lg p-6 overflow-y-auto">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xl font-semibold text-gray-800">Edit SubCategory</h3>
-            <button onClick={closeDrawer}>
-              <HiOutlineX className="w-6 h-6 text-gray-600 hover:text-red-500" />
-            </button>
+      <>
+        <div className="fixed inset-0 z-50 flex justify-end bg-black bg-opacity-30">
+          <div className="w-full max-w-md bg-white h-full shadow-lg p-6 overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-semibold text-gray-800">Edit SubCategory</h3>
+              <button onClick={closeDrawer}>
+                <HiOutlineX className="w-6 h-6 text-gray-600 hover:text-red-500" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div>
+                <Label htmlFor="subcategory" value="SubCategory" />
+                <TextInput
+                  id="subcategory"
+                  name="subcategory"
+                  value={subCategoryData.subcategory}
+                  onChange={handleChange}
+                  placeholder="Enter subcategory name"
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="description" value="Description" />
+                <TextInput
+                  id="description"
+                  name="description"
+                  value={subCategoryData.description}
+                  onChange={handleChange}
+                  placeholder="Enter description"
+                  required
+                />
+              </div>
+
+              <div className="flex justify-between mt-4">
+                <Button color="gray" onClick={closeDrawer} type="button">
+                  Cancel
+                </Button>
+                <Button type="submit">Update</Button>
+              </div>
+            </form>
           </div>
-
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <Label htmlFor="subcategory" value="SubCategory" />
-              <TextInput
-                id="subcategory"
-                name="subcategory"
-                value={subCategoryData.subcategory}
-                onChange={handleChange}
-                placeholder="Enter subcategory name"
-                required
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="description" value="Description" />
-              <TextInput
-                id="description"
-                name="description"
-                value={subCategoryData.description}
-                onChange={handleChange}
-                placeholder="Enter description"
-                required
-              />
-            </div>
-
-            <div className="flex justify-between mt-4">
-              <Button color="gray" onClick={closeDrawer} type="button">
-                Cancel
-              </Button>
-              <Button type="submit">Update</Button>
-            </div>
-          </form>
         </div>
-      </div>
+
+        {/* Snackbar */}
+        <Snackbar
+          anchorOrigin={{ vertical, horizontal }}
+          open={openSnackbar}
+          onClose={handleCloseSnackbar}
+          message={snackMessage}
+          autoHideDuration={3000}
+          key={vertical + horizontal}
+        />
+      </>
     )
   );
 };

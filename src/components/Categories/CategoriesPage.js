@@ -1,6 +1,8 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Menu } from '@headlessui/react';
+import { EllipsisVerticalIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import axios from "axios";
 
 const CategoriesPage = () => {
@@ -14,28 +16,28 @@ const CategoriesPage = () => {
 
   const myToken = localStorage.getItem("Token");
 
- useEffect(() => {
-  const fetchCategories = async () => {
-    try {
-      const response = await axios.get('http://43.250.40.133:5005/api/v1/categories', {
-        headers: {
-          Authorization: `Bearer ${myToken}`,
-        },
-      });
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get('http://43.250.40.133:5005/api/v1/categories', {
+          headers: {
+            Authorization: `Bearer ${myToken}`,
+          },
+        });
 
-      console.log('Categories:', response.data);
-      const data = response.data?.data || [];
-      setCategories(data);
-      setFilteredCategories(data);
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+        console.log('Categories:', response.data);
+        const data = response.data?.data || [];
+        setCategories(data);
+        setFilteredCategories(data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  fetchCategories();
-}, []);
+    fetchCategories();
+  }, []);
 
 
   const handleToggle = async (index, categoryId) => {
@@ -148,20 +150,49 @@ const CategoriesPage = () => {
                   <span className="font-semibold">{index + 1}.</span>
                   <span className="font-medium text-gray-800">{item.name}</span>
                 </div>
-                <div className="flex gap-4">
-                  <button className="text-blue-500 hover:underline" onClick={() => navigate(`/edit-category/${item._id}`)}>
-                    Edit
-                  </button>
-                  <button
-                    className="text-red-500 hover:underline"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeleteCategory(item._id, item.name);
-                    }}
-                  >
-                    Delete
-                  </button>
-                </div>
+                <Menu as="div" className="relative inline-block text-left">
+                  <Menu.Button className="p-2 rounded-full hover:bg-gray-100 focus:outline-none">
+                    <span className="sr-only">Open options</span>
+                    <svg
+                      className="w-5 h-5 text-gray-600"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5a1.5 1.5 0 110 3 1.5 1.5 0 010-3z" />
+                    </svg>
+                  </Menu.Button>
+
+                  <Menu.Items className="absolute right-0 mt-2 w-36 origin-top-right bg-white border border-gray-200 rounded-md shadow-lg focus:outline-none z-50">
+                    <div className="p-1">
+                      <Menu.Item>
+                        {({ active }) => (
+                          <button
+                            onClick={() => navigate(`/edit-category/${item._id}`)}
+                            className={`${active ? 'bg-gray-100' : ''
+                              } group flex items-center w-full px-3 py-2 text-sm text-gray-800`}
+                          >
+                            ✏️ Edit
+                          </button>
+                        )}
+                      </Menu.Item>
+                      <Menu.Item>
+                        {({ active }) => (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteCategory(item._id, item.name);
+                            }}
+                            className={`${active ? 'bg-red-100' : ''
+                              } group flex items-center w-full px-3 py-2 text-sm text-red-600`}
+                          >
+                            🗑️ Delete
+                          </button>
+                        )}
+                      </Menu.Item>
+                    </div>
+                  </Menu.Items>
+                </Menu>
+
               </div>
 
               {/* Subcategories */}
@@ -176,12 +207,12 @@ const CategoriesPage = () => {
                       <p className="text-sm text-gray-500">Loading...</p>
                     ) : subcategories[item._id]?.length > 0 ? (
                       <table className="w-full text-sm text-left mt-2 border border-gray-300">
-                        <thead className="bg-gray-100">
+                        <thead className="bg-blue-100">
                           <tr>
-                            <th className="px-4 py-2 border-b">#</th>
+                            <th className="px-4 py-2 border-b">s.no</th>
                             <th className="px-4 py-2 border-b">Name</th>
                             <th className="px-4 py-2 border-b">Description</th>
-                            <th className="px-4 py-2 border-b">Actions</th>
+                            <th className="px-4 py-2 border-b">Action</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -190,13 +221,40 @@ const CategoriesPage = () => {
                               <td className="px-4 py-2 border-b">{i + 1}</td>
                               <td className="px-4 py-2 border-b">{sub.name}</td>
                               <td className="px-4 py-2 border-b">{sub.description}</td>
-                              <td className="px-4 py-2 border-b">
-                                <button className="text-blue-600 hover:underline mr-4" onClick={() => navigate(`/edit-subcategory/${sub._id}`)}>
-                                  Edit
-                                </button>
-                                <button className="text-red-600 hover:underline" onClick={() => handleDeleteSubcategory(item._id, sub._id, sub.name)}>
-                                  Delete
-                                </button>
+                              <td className="px-4 py-2 border-b text-right">
+                                <Menu as="div" className="relative inline-block text-center">
+                                  <Menu.Button className="p-2 hover:bg-gray-200 rounded-full">
+                                    <EllipsisVerticalIcon className="h-5 w-5 text-gray-600" />
+                                  </Menu.Button>
+                                  <Menu.Items className="absolute right-0 mt-2 w-28 origin-top-right bg-white border border-gray-200 rounded-md shadow-lg z-10">
+                                    <div className="py-1">
+                                      <Menu.Item>
+                                        {({ active }) => (
+                                          <button
+                                            onClick={() => navigate(`/edit-subcategory/${sub._id}`)}
+                                            className={`${active ? 'bg-gray-100' : ''
+                                              } flex items-center w-full px-4 py-2 text-sm text-gray-700`}
+                                          >
+                                            <PencilSquareIcon className="w-4 h-4 mr-2" />
+                                            Edit
+                                          </button>
+                                        )}
+                                      </Menu.Item>
+                                      <Menu.Item>
+                                        {({ active }) => (
+                                          <button
+                                            onClick={() => handleDeleteSubcategory(item._id, sub._id, sub.name)}
+                                            className={`${active ? 'bg-gray-100' : ''
+                                              } flex items-center w-full px-4 py-2 text-sm text-red-600`}
+                                          >
+                                            <TrashIcon className="w-4 h-4 mr-2" />
+                                            Delete
+                                          </button>
+                                        )}
+                                      </Menu.Item>
+                                    </div>
+                                  </Menu.Items>
+                                </Menu>
                               </td>
                             </tr>
                           ))}
@@ -217,3 +275,25 @@ const CategoriesPage = () => {
 };
 
 export default CategoriesPage;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
