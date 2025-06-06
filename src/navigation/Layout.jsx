@@ -11,6 +11,7 @@ import {
   HiMoon,
   HiSun,
   HiOfficeBuilding,
+  HiUsers,
 } from "react-icons/hi";
 import { useAuth } from "../components/AuthContext";
 
@@ -267,7 +268,8 @@ export default function Layout({ children }) {
       ],
     },
     { name: "Profile", icon: HiUser, path: "/profile" },
-    { name: "Hospitals", icon: HiOfficeBuilding, path: "/hospitals/list" }
+    { name: "Hospitals", icon: HiOfficeBuilding, path: "/hospitals/list" },
+    {name: "Users", icon: HiUsers, path: "/users/list"}
   ];
 
   const activeMenuName = findActiveMenuName(menuItems, location.pathname) || "Dashboard";

@@ -11,6 +11,7 @@ import Monthly from "./components/Dashboard/Reports/Monthly";
 import Login from "./components/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import HospitalTable from "./components/Hospitals/HospitalTable";
+import UsersTable from "./components/UserManagement/UsersTable";
 
 function App() {
   return (
@@ -51,6 +52,7 @@ function App() {
                       element={<Monthly />}
                     />
                     <Route path="/hospitals/list" element={<HospitalTable />} />
+                    <Route path="/users/list" element={<UsersTable />} />
                     
                     {/* Add more protected routes here */}
                   </Routes>
