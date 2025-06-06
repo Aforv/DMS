@@ -1,5 +1,5 @@
 "use client";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
 import ProfilePage from "./components/ProfilePage";
 import Layout from "./navigation/Layout";
@@ -8,20 +8,22 @@ import Daily from "./components/Dashboard/Reports/Daily";
 import Monthly from "./components/Dashboard/Reports/Monthly";
 import Login from "./components/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
+import InvoiceTable from "./components/Invoices/InvoiceTable";
+import AddInvoiceForm from "./components/Invoices/AddInvoiceForm";
 
 function App() {
   return (
     <>
         <Routes>
-          <Route
+          {/* <Route
             path="/login"
             element={<Login />}
-          />
+          /> */}
 
           <Route
             path="/*"
             element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
                 <Layout>
                    <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-5"> 
                   <Routes>
@@ -36,11 +38,13 @@ function App() {
                       path="/dashboard/reports/monthly"
                       element={<Monthly />}
                     />
+                    <Route path="/invoices/list" element={<InvoiceTable />} />
+                    <Route path="/invoices/addinvoiceform" element={<AddInvoiceForm />} />
                     {/* Add more protected routes here */}
                   </Routes>
                   </div>
                 </Layout>
-              </ProtectedRoute>
+              // </ProtectedRoute>
             }
           />
         </Routes>
