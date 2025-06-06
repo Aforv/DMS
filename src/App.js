@@ -10,6 +10,7 @@ import Login from "./components/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import DepartmentsTable from "./components/Departments/DepartmentsTable";
 
+
 function App() {
   return (
     <>
@@ -37,8 +38,9 @@ function App() {
                       path="/dashboard/reports/monthly"
                       element={<Monthly />}
                     />
-                    <Route path="/departments" element={<DepartmentsTable />} />
+                    <Route path="/departments" element={<DepartmentsTable />} >
                    
+                    </Route>
                     {/* Add more protected routes here */}
                   </Routes>
                   </div>
