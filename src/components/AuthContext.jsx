@@ -9,11 +9,13 @@ export function AuthProvider({ children }) {
  // const [refreshToken, setRefreshToken] = useState(localStorage.getItem("refreshToken"));
 
   const login = async (username, password) => {
+    const loginDetails ={
+      email: username,
+      password: password
+    }
+    
     try {
-    const res = await axiosInstance.post("/api/login", {
-        username,
-        password,
-      });
+    const res = await axiosInstance.post("/auth/login", loginDetails);
       localStorage.setItem("token", res.data.token);
       // localStorage.setItem('refreshToken', res.data.refreshToken);
       setToken(res.data.token);
