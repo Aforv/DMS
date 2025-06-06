@@ -11,6 +11,7 @@ import {
   HiMoon,
   HiSun,
 } from "react-icons/hi";
+import { HiOfficeBuilding } from 'react-icons/hi';
 import { useAuth } from "../components/AuthContext";
 
 function UserProfileMenu() {
@@ -265,6 +266,7 @@ export default function Layout({ children }) {
         },
       ],
     },
+    { name: "Invoices", icon: HiOfficeBuilding, path: "/invoices/list" },
     { name: "Profile", icon: HiUser, path: "/profile" },
   ];
 
