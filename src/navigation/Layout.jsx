@@ -10,10 +10,11 @@ import {
   HiChevronDown,
   HiMoon,
   HiSun,
-  HiOfficeBuilding,
+
 } from "react-icons/hi";
 import { useAuth } from "../components/AuthContext";
 
+import { HiBuildingLibrary } from "react-icons/hi2";
 function UserProfileMenu() {
   const { logout } = useAuth();
   const user = {
@@ -267,7 +268,7 @@ export default function Layout({ children }) {
       ],
     },
     { name: "Profile", icon: HiUser, path: "/profile" },
-    { name: "Hospitals", icon: HiOfficeBuilding, path: "/hospitals/list" }
+   { name: "Departments", icon: HiBuildingLibrary, path: "/departments" }
   ];
 
   const activeMenuName = findActiveMenuName(menuItems, location.pathname) || "Dashboard";

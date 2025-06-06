@@ -20,6 +20,7 @@ export default function Login() {
     const res = await login(username, password);
     if (res.success) {
       navigate(from, { replace: true });
+      localStorage.setItem("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzE4M2UzMDRkYWI3NzA4NDE3ZDM1NyIsImlhdCI6MTc0OTE5NjkxOSwiZXhwIjoxNzUxNzg4OTE5fQ.-hagMU8Cy40SjpmwhJbjf8QEk8znfPANmnqtvWcHT9M");
     } else {
       setError(res.message);
     }
