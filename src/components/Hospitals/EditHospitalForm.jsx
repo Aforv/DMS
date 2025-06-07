@@ -1,9 +1,10 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 
 const EditHospitalForm = ({ show, onClose, hospital, onUpdate }) => {
   const [formData, setFormData] = useState({});
-  const [updateMessage, setUpdateMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const token =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzE4M2UzMDRkYWI3NzA4NDE3ZDM1NyIsImlhdCI6MTc0ODg2OTU3MywiZXhwIjoxNzUxNDYxNTczfQ.GQ8JI7OeUW6dZA63JQLlErGWyTsNLuv1F2WiGRhQTXY";
@@ -21,7 +22,6 @@ const EditHospitalForm = ({ show, onClose, hospital, onUpdate }) => {
   useEffect(() => {
     if (hospital) {
       setFormData(hospital);
-      setUpdateMessage("");
     }
   }, [hospital]);
 
@@ -32,6 +32,7 @@ const EditHospitalForm = ({ show, onClose, hospital, onUpdate }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     try {
       const response = await axios.put(
@@ -46,40 +47,35 @@ const EditHospitalForm = ({ show, onClose, hospital, onUpdate }) => {
       );
 
       const updatedHospital = response.data.data;
-      onUpdate(updatedHospital);
-      setUpdateMessage("Hospital updated successfully!");
+      onUpdate();
+      toast.success("Hospital updated successfully!");
 
-      // Close modal after 3 seconds
       setTimeout(() => {
-        setUpdateMessage("");
         onClose();
-      }, 3000);
+      }, 2000);
     } catch (error) {
       console.error("Error updating hospital:", error);
-      setUpdateMessage("Failed to update hospital. Please try again.");
+      toast.error("Failed to update hospital. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   if (!show || !hospital) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-end">
+    <div className="fixed inset-0 z-50 flex items-center justify-end bg-black bg-opacity-40 ">
       <div className="fixed inset-0 bg-black opacity-30" onClick={onClose}></div>
       <div
-        className={`relative mt-10 mr-4 w-full max-w-md bg-white shadow-2xl rounded-xl transform transition-transform duration-300 ease-in-out ${
-          show ? "translate-x-0" : "translate-x-full"
+        className={`relative bg-white w-full sm:max-w-md h-full shadow-xl transform transition-transform duration-2000 ease-in-out ${
+        show ? "translate-x-0" : "translate-x-full"
         }`}
+        style={{ height: "80vh", borderRadius: "10px" }}
       >
         <div className="p-6">
           <h3 className="text-xl font-semibold mb-4 text-gray-800">
             Edit Hospital
           </h3>
-
-          {updateMessage && (
-            <div className="mb-4 text-sm text-green-600 bg-green-100 p-2 rounded">
-              {updateMessage}
-            </div>
-          )}
 
           <form className="grid grid-cols-2 gap-4" onSubmit={handleSubmit}>
             {fields.map((field) => (
@@ -106,14 +102,16 @@ const EditHospitalForm = ({ show, onClose, hospital, onUpdate }) => {
                 type="button"
                 onClick={onClose}
                 className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition"
+                disabled={isSubmitting}
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                disabled={isSubmitting}
               >
-                Update
+                {isSubmitting ? "Updating..." : "Update"}
               </button>
             </div>
           </form>
