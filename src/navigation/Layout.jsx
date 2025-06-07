@@ -13,6 +13,7 @@ import {
   HiSun,
   HiOfficeBuilding,
 } from "react-icons/hi";
+import { RiFoldersLine } from "react-icons/ri";
 import { useAuth } from "../components/AuthContext";
 
 function UserProfileMenu() {
@@ -268,6 +269,9 @@ export default function Layout({ children }) {
       ],
     },
     { name: "Profile", icon: HiUser, path: "/profile" },
+  
+  { name: "Categories", icon: RiFoldersLine, path: "/categories" },
+ 
     {name:"Products" ,icon:FaShoppingCart,path:"/products"},
     { name: "Doctor", icon: HiUser, path: "/doctor" },
     { name: "Hospitals", icon: HiOfficeBuilding, path: "/hospitals/list" }
