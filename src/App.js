@@ -1,7 +1,8 @@
+ 
 "use client";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
 import ProfilePage from "./components/ProfilePage";
 import Layout from "./navigation/Layout";
@@ -10,6 +11,16 @@ import Daily from "./components/Dashboard/Reports/Daily";
 import Monthly from "./components/Dashboard/Reports/Monthly";
 import Login from "./components/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Inventory from "./components/inventory/Inventory";
+import DataTableWithMenu from "./components/inventory/DataTableWithFlowbite";
+import CategoriesPage from "./components/Categories/CategoriesPage";
+import AddCategoryPage from "./components/Categories/AddCategoryPage";
+import AddSubCategoryPage from "./components/Categories/AddSubCategoryPage";
+import EditCategory from "./components/Categories/EditCategory";
+import EditSubCategory from "./components/Categories/EditSubCategory";
+import Products from "./components/Products";
+import ProductsForm from "./components/ProductsForm";
+import DoctorsTable from "./components/Doctor/DoctorTable";
 import HospitalTable from "./components/Hospitals/HospitalTable";
 import UsersTable from "./components/UserManagement/UsersTable";
 
@@ -28,20 +39,27 @@ function App() {
         pauseOnHover
       />
         <Routes>
+          {/* <Inventory/> */}
           <Route
             path="/login"
             element={<Login />}
           />
-
-          <Route
-            path="/*"
-            element={
-              <ProtectedRoute>
-                <Layout>
-                   <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-5"> 
+        <Route
+          path="/*"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-5">
                   <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/profile" element={<ProfilePage />} />
+                    <Route path="/categories" element={<CategoriesPage />} />
+                    <Route path="/add-category" element={<AddCategoryPage />} />
+                    <Route path="/subcategories" element={<AddSubCategoryPage />} />
+                    <Route path="/edit-category/:id" element={<EditCategory />} />
+                    <Route path="/edit-subcategory/:id" element={<EditSubCategory />} />
+                    <Route path="/products" element={<Products/>}/>
+                    <Route path="/productform" element={<ProductsForm/>}/>
                     <Route path="/dashboard/overview" element={<Overview />} />
                     <Route
                       path="/dashboard/reports/daily"
@@ -51,18 +69,20 @@ function App() {
                       path="/dashboard/reports/monthly"
                       element={<Monthly />}
                     />
+                    <Route path = "/inventory" element = {<Inventory/>}/>
+                    <Route path="/doctor" element={<DoctorsTable />} />
                     <Route path="/hospitals/list" element={<HospitalTable />} />
                     <Route path="/users/list" element={<UsersTable />} />
                     
                     {/* Add more protected routes here */}
                   </Routes>
-                  </div>
-                </Layout>
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-    
+                </div>
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+
     </>
   );
 }

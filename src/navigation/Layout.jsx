@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import { ImStatsBars2 } from "react-icons/im";
+import { FaShoppingCart } from "react-icons/fa";
 import {
   HiHome,
   HiUser,
@@ -13,6 +15,7 @@ import {
   HiOfficeBuilding,
   HiUsers,
 } from "react-icons/hi";
+import { RiFoldersLine } from "react-icons/ri";
 import { useAuth } from "../components/AuthContext";
 
 function UserProfileMenu() {
@@ -269,7 +272,12 @@ export default function Layout({ children }) {
     },
     { name: "Profile", icon: HiUser, path: "/profile" },
     { name: "Hospitals", icon: HiOfficeBuilding, path: "/hospitals/list" },
-    {name: "Users", icon: HiUsers, path: "/users/list"}
+    {name: "Users", icon: HiUsers, path: "/users/list"},
+    { name: "Inventory", icon: ImStatsBars2, path: "/inventory" },  
+    { name: "Categories", icon: RiFoldersLine, path: "/categories" }, 
+    { name:"Products" ,icon:FaShoppingCart,path:"/products"},
+    { name: "Doctor", icon: HiUser, path: "/doctor" },
+    { name: "Hospitals", icon: HiOfficeBuilding, path: "/hospitals/list" }
   ];
 
   const activeMenuName = findActiveMenuName(menuItems, location.pathname) || "Dashboard";
