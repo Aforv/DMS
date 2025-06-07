@@ -10,6 +10,9 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import ProductsForm from './ProductsForm'
 import { HiX } from "react-icons/hi";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 export default function Products() {
   const [openModal, setOpenModal] = useState(false);
@@ -125,8 +128,8 @@ const config = {
 if(editindex!=null){  
 let editElement=Allproducts[editindex]; 
 axios.put(`http://43.250.40.133:5005/api/v1/products/${editElement._id}`,Data,config).then(response => {
-    console.log('Response:', response.data);
     setEditIndex(null);
+    toast.success("Product updated successfully!");
       setTimeout(() => {
     fetchProducts();  
   }, 500);
@@ -157,6 +160,7 @@ else{
     setTimeout(() => {
     fetchProducts();  
   }, 500); 
+  toast.success("Product updated successfully!");
   setData({
   name:"",
   productCode:"",
@@ -185,7 +189,7 @@ function handledelete(id) {
     }
   })
   .then(response => {
-    console.log(response.data);
+  toast.success("Product deleted successfully!");
     setTimeout(() => {
     fetchProducts();  
   }, 500);
@@ -224,6 +228,8 @@ function handleExportToExcel() {
       {loading && <Spinner />}
 <div className="flex justify-between items-center mb-4 flex-wrap gap-4">
   <div className="flex items-center gap-2">
+  <ToastContainer position="top-right" autoClose={3000} />
+
     <TextInput
       icon={HiSearch}
       placeholder="Search products..."
@@ -255,7 +261,7 @@ function handleExportToExcel() {
       />
    </div>
 
-<Drawer open={openModal} onClose={onCloseModal} className="w-[90vw] max-w-[60vw]" position="right">
+<Drawer open={openModal} onClose={onCloseModal} className="w-[90vw] max-w-[45vw]" position="right">
   <div className="w-full h-screen overflow-y-auto p-4">
     <div className="flex justify-between items-center border-b pb-4">
       <h2 className="text-xl font-bold text-gray-900 dark:text-white">Add Products</h2>
@@ -274,6 +280,7 @@ function handleExportToExcel() {
           value={Data.name}
           placeholder="Enter Supplier Name..."
           required
+           className="w-60"
         />
       </div>
       <div className="flex-1 min-w-[200px]">
@@ -283,6 +290,7 @@ function handleExportToExcel() {
           name="productCode"
           onChange={handlechange}
           value={Data.productCode}
+          className="w-60"
           placeholder="Enter Product Code..."
           required
         />
@@ -297,6 +305,7 @@ function handleExportToExcel() {
   id="principle"
   name="principle"
   value={Data.principle}
+  className="w-60"
   onChange={handlechange}
   required
 >
@@ -313,7 +322,7 @@ function handleExportToExcel() {
           value={Data.description}
           onChange={handlechange}
           placeholder="Enter description..."
-          className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 
+          className="w-60  bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 
                      focus:ring-blue-500 focus:border-blue-500 
                      dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
         />
@@ -332,7 +341,7 @@ function handleExportToExcel() {
           onChange={handlechange}
           placeholder="0"
           required
-          className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 
+          className="w-60 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 
                      focus:ring-blue-500 focus:border-blue-500 
                      dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
         />
@@ -347,7 +356,7 @@ function handleExportToExcel() {
           onChange={handlechange}
           placeholder="0"
           required
-          className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 
+          className="w-60 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 
                      focus:ring-blue-500 focus:border-blue-500 
                      dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
         />
@@ -366,7 +375,7 @@ function handleExportToExcel() {
           onChange={handlechange}
           placeholder="0"
           required
-          className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 
+          className="w-60 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 
                      focus:ring-blue-500 focus:border-blue-500 
                      dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
         />
@@ -381,15 +390,15 @@ function handleExportToExcel() {
           onChange={handlechange}
           placeholder="Ex. Warehouse A"
           required
-          className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 
+          className="w-60 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 
                      focus:ring-blue-500 focus:border-blue-500 
                      dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
         />
       </div>
     </div>    
  <div className="flex justify-center pt-4">
-      <Button className="text-green-400" color="green" onClick={handleAddandEdit}>
-        {editindex != null ? "Update" : "ADD"}
+      <Button className="white" color="blue" onClick={handleAddandEdit}>
+        {editindex != null ? "Edit" : "Submit"}
       </Button>
     </div>
   </div>
