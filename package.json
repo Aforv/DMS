@@ -71,7 +71,7 @@
         "lines": 85,
         "statements": -10
       }
-    }
+    },
     "transformIgnorePatterns": [
       "/node_modules/(?!axios)/"
     ]
