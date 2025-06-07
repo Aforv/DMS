@@ -63,7 +63,8 @@ const DeleteHospitalConfirmation = ({
     className={`bg-white w-full rounded-2xl
       sm:max-w-md shadow-xl transition-transform duration-2000 ease-in-out ${
       isOpen ? "translate-x-0" : "translate-x-full"
-    }`}  >
+    }`} 
+    onClick={(e) => e.stopPropagation()} >
     <div className="p-6 ">
       <h2 className="text-lg font-semibold text-red-600 mb-4">Confirm Deletion</h2>
       <p className="mb-6 text-gray-800">

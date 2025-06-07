@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { Dropdown, TextInput } from "flowbite-react";
 import { HiDotsVertical, HiSearch, HiPencil, HiTrash } from "react-icons/hi";
-import axios from "axios";
 
 import AddUserForm from "./AddUserForm";
 import { useAuth } from "../AuthContext";
+import axiosInstance from "../../utils/axiosInstancenew";
 
 
 
@@ -48,7 +48,7 @@ const UsersTable = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get(
+      const response = await axiosInstance.get(
         "http://43.250.40.133:5005/api/v1/users?page=1&limit=100",
         {
           headers: {

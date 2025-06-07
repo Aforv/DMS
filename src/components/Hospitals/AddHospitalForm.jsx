@@ -98,7 +98,7 @@ const AddHospitalForm = ({ showModal, setShowModal, fetchHospitals }) => {
   className={`relative bg-white w-full sm:max-w-md h-screen shadow-xl transform transition-transform duration-2000 ease-in-out ${
     showModal ? "translate-x-0" : "translate-x-full"
   }`} 
-     
+     onClick={(e) => e.stopPropagation()}
     >
       {/* Close Button */}
       <button
