@@ -41,8 +41,7 @@ function App() {
                       element={<Monthly />}
                     />
                     <Route path = "/inventory" element = {<Inventory/>}/>
-                    {/* <Route path = "/inventory" element = {<DataTableWithMenu/>}/> */}
-                    {/* Add more protected routes here */}
+                   
                   </Routes>
                   </div>
                 </Layout>
