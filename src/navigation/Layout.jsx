@@ -13,6 +13,7 @@ import {
   HiMoon,
   HiSun,
   HiOfficeBuilding,
+  HiUsers,
 } from "react-icons/hi";
 import { RiFoldersLine } from "react-icons/ri";
 import { useAuth } from "../components/AuthContext";
@@ -270,6 +271,8 @@ export default function Layout({ children }) {
       ],
     },
     { name: "Profile", icon: HiUser, path: "/profile" },
+    { name: "Hospitals", icon: HiOfficeBuilding, path: "/hospitals/list" },
+    {name: "Users", icon: HiUsers, path: "/users/list"},
     { name: "Inventory", icon: ImStatsBars2, path: "/inventory" },  
     { name: "Categories", icon: RiFoldersLine, path: "/categories" }, 
     { name:"Products" ,icon:FaShoppingCart,path:"/products"},

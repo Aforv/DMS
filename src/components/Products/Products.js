@@ -5,7 +5,7 @@ import { useState,useEffect } from 'react';
 import axios from 'axios';
 import { Drawer } from 'flowbite-react';
 import { HiSearch } from "react-icons/hi";
-import Spinner from './Spinner';
+import Spinner from '../Spinner';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import ProductsForm from './ProductsForm'

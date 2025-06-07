@@ -18,10 +18,11 @@ import AddCategoryPage from "./components/Categories/AddCategoryPage";
 import AddSubCategoryPage from "./components/Categories/AddSubCategoryPage";
 import EditCategory from "./components/Categories/EditCategory";
 import EditSubCategory from "./components/Categories/EditSubCategory";
-import Products from "./components/Products";
-import ProductsForm from "./components/ProductsForm";
+import Products from "./components/Products/Products";
+import ProductsForm from "./components/Products/ProductsForm";
 import DoctorsTable from "./components/Doctor/DoctorTable";
 import HospitalTable from "./components/Hospitals/HospitalTable";
+import UsersTable from "./components/UserManagement/UsersTable";
 
 function App() {
   return (
@@ -71,6 +72,8 @@ function App() {
                     <Route path = "/inventory" element = {<Inventory/>}/>
                     <Route path="/doctor" element={<DoctorsTable />} />
                     <Route path="/hospitals/list" element={<HospitalTable />} />
+                    <Route path="/users/list" element={<UsersTable />} />
+                    
                     {/* Add more protected routes here */}
                   </Routes>
                 </div>
