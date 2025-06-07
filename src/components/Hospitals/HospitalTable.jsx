@@ -3,7 +3,41 @@ import DataTable from "react-data-table-component";
 import AddHospitalForm from "./AddHospitalForm";
 import axios from "axios";
 import { FaEdit, FaTrash } from "react-icons/fa"; // Icons for Edit and Delete
+import EditHospitalForm from "./EditHospitalForm"; // Add this
 
+
+
+const customStyles = {
+  headRow: {
+    style: {
+      backgroundColor: "#b3d9ff",
+      color: "#111827",
+      fontWeight: "bold",
+    },
+  },
+  rows: {
+    style: {
+      backgroundColor: "#fff",
+      borderBottom: "1px solid #e5e7eb",
+    },
+  },
+};
+
+const HospitalTable = () => {
+  const [showModal, setShowModal] = useState(false);
+  const [hospitalData, setHospitalData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedHospital, setSelectedHospital] = useState(null);
+
+const handleUpdate = (updatedHospital) => {
+  // Update the hospitalData array with the updated hospital object
+  setHospitalData((prevData) =>
+    prevData.map((h) => (h._id === updatedHospital._id ? updatedHospital : h))
+  );
+  setEditModalOpen(false); // close edit modal on update
+};
 const columns = [
   { name: "SL.NO", selector: (_, index) => index + 1, width: "80px" },
   { name: "Name", selector: row => row.name, sortable: true },
@@ -28,6 +62,7 @@ const columns = [
   cell: row => (
     <div className="flex gap-2">
       <button
+        onClick={() => handleEditClick(row)}
         className="bg-teal-700 hover:bg-teal-800 text-white px-2 py-1 rounded text-xs flex items-center"
         title="Edit"
       >
@@ -51,27 +86,10 @@ const columns = [
 
 ];
 
-const customStyles = {
-  headRow: {
-    style: {
-      backgroundColor: "#b3d9ff",
-      color: "#111827",
-      fontWeight: "bold",
-    },
-  },
-  rows: {
-    style: {
-      backgroundColor: "#fff",
-      borderBottom: "1px solid #e5e7eb",
-    },
-  },
+const handleEditClick = (hospital) => {
+  setSelectedHospital(hospital);
+  setEditModalOpen(true);
 };
-
-const HospitalTable = () => {
-  const [showModal, setShowModal] = useState(false);
-  const [hospitalData, setHospitalData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
   const token =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzE4M2UzMDRkYWI3NzA4NDE3ZDM1NyIsImlhdCI6MTc0ODg2OTU3MywiZXhwIjoxNzUxNDYxNTczfQ.GQ8JI7OeUW6dZA63JQLlErGWyTsNLuv1F2WiGRhQTXY";
@@ -132,6 +150,12 @@ const HospitalTable = () => {
       />
 
       <AddHospitalForm showModal={showModal} setShowModal={setShowModal} />
+      <EditHospitalForm
+        show={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        hospital={selectedHospital}
+      />onUpdate={handleUpdate}
+
     </div>
   );
 };
