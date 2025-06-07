@@ -80,7 +80,7 @@ const UsersTable = () => {
 
   const confirmDelete = async () => {
     try {
-      await axios.delete(
+      await axiosInstance.delete(
         `http://43.250.40.133:5005/api/v1/users/${userToDelete._id}`,
         {
           headers: {
