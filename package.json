@@ -16,8 +16,9 @@
     "flowbite": "^3.1.2",
     "flowbite-react": "^0.10.2",
     "react": "^19.0.0",
-    "react-data-table-component": "^7.6.2",
+    "react-data-table-component": "^7.7.0",
     "react-dom": "^19.0.0",
+    "react-hot-toast": "^2.5.2",
     "react-icons": "^5.5.0",
     "react-scripts": "5.0.1",
     "react-toastify": "^11.0.5",
@@ -27,7 +28,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "coverage": "npm test -- --coverage --watchAll --collectCoverageFrom= 'src/components/*/.{js,jsx}' "
   },
   "eslintConfig": {
     "extends": [
@@ -48,6 +50,9 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@babel/core": "^7.27.4",
     "@babel/preset-env": "^7.27.2",
     "@babel/preset-react": "^7.27.1",
@@ -59,6 +64,14 @@
     "web-vitals": "^4.2.4"
   },
   "jest": {
+    "coverageThreshold": {
+      "global": {
+        "branches": 40,
+        "functions": 80,
+        "lines": 85,
+        "statements": -10
+      }
+    }
     "transformIgnorePatterns": [
       "/node_modules/(?!axios)/"
     ]

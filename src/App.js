@@ -11,6 +11,8 @@ import Daily from "./components/Dashboard/Reports/Daily";
 import Monthly from "./components/Dashboard/Reports/Monthly";
 import Login from "./components/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Inventory from "./components/inventory/Inventory";
+import DataTableWithMenu from "./components/inventory/DataTableWithFlowbite";
 import CategoriesPage from "./components/Categories/CategoriesPage";
 import AddCategoryPage from "./components/Categories/AddCategoryPage";
 import AddSubCategoryPage from "./components/Categories/AddSubCategoryPage";
@@ -36,6 +38,7 @@ function App() {
         pauseOnHover
       />
         <Routes>
+          {/* <Inventory/> */}
           <Route
             path="/login"
             element={<Login />}
@@ -65,6 +68,7 @@ function App() {
                       path="/dashboard/reports/monthly"
                       element={<Monthly />}
                     />
+                    <Route path = "/inventory" element = {<Inventory/>}/>
                     <Route path="/doctor" element={<DoctorsTable />} />
                     <Route path="/hospitals/list" element={<HospitalTable />} />
                     {/* Add more protected routes here */}
