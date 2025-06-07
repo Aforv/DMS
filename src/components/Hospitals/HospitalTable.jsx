@@ -4,6 +4,7 @@ import AddHospitalForm from "./AddHospitalForm";
 import axios from "axios";
 import { FaEdit, FaTrash } from "react-icons/fa"; // Icons for Edit and Delete
 import EditHospitalForm from "./EditHospitalForm"; // Add this
+import DeleteHospital from "./DeleteHospital";
 
 
 
@@ -30,13 +31,13 @@ const HospitalTable = () => {
   const [error, setError] = useState("");
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedHospital, setSelectedHospital] = useState(null);
-
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [hospitalToDelete, setHospitalToDelete] = useState(null);
 const handleUpdate = (updatedHospital) => {
-  // Update the hospitalData array with the updated hospital object
   setHospitalData((prevData) =>
     prevData.map((h) => (h._id === updatedHospital._id ? updatedHospital : h))
   );
-  setEditModalOpen(false); // close edit modal on update
+  setEditModalOpen(false);
 };
 const columns = [
   { name: "SL.NO", selector: (_, index) => index + 1, width: "80px" },
@@ -70,6 +71,7 @@ const columns = [
         Edit
       </button>
       <button
+       onClick={() => handleDeleteClick(row)}
         className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs flex items-center"
         title="Delete"
       >
@@ -90,6 +92,35 @@ const handleEditClick = (hospital) => {
   setSelectedHospital(hospital);
   setEditModalOpen(true);
 };
+
+const handleDeleteClick = (hospital) => {
+    setHospitalToDelete(hospital);
+    setDeleteModalOpen(true);
+  };
+
+  // Confirm delete
+  const confirmDelete = async () => {
+    try {
+      await axios.delete(
+        `http://43.250.40.133:5005/api/v1/hospitals/${hospitalToDelete._id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setHospitalData((prev) =>
+        prev.filter((hospital) => hospital._id !== hospitalToDelete._id)
+      );
+      setDeleteModalOpen(false);
+      setHospitalToDelete(null);
+      
+    } catch (error) {
+      console.error("Delete failed:", error);
+      
+    }
+  };
+
 
   const token =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzE4M2UzMDRkYWI3NzA4NDE3ZDM1NyIsImlhdCI6MTc0ODg2OTU3MywiZXhwIjoxNzUxNDYxNTczfQ.GQ8JI7OeUW6dZA63JQLlErGWyTsNLuv1F2WiGRhQTXY";
@@ -154,7 +185,16 @@ const handleEditClick = (hospital) => {
         show={editModalOpen}
         onClose={() => setEditModalOpen(false)}
         hospital={selectedHospital}
-      />onUpdate={handleUpdate}
+        onUpdate={handleUpdate}
+       />
+
+      <DeleteHospital
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={confirmDelete}
+        hospitalName={hospitalToDelete?.name}
+      />
+
 
     </div>
   );
