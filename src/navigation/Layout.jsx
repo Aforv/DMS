@@ -267,6 +267,7 @@ export default function Layout({ children }) {
       ],
     },
     { name: "Profile", icon: HiUser, path: "/profile" },
+    { name: "Doctor", icon: HiUser, path: "/doctor" },
     { name: "Hospitals", icon: HiOfficeBuilding, path: "/hospitals/list" }
   ];
 
