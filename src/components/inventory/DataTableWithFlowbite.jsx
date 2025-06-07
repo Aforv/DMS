@@ -6,9 +6,9 @@ import { HiSearch, HiTrash, HiPencil, HiDotsVertical } from "react-icons/hi";
 const DataTableWithMenu = ({ data = [], onEdit, onDelete }) => {
   const [filterText, setFilterText] = useState("");
 
-  
+ 
   const filteredItems = data.filter((item) => {
-
+    
     const combined = [
       item.product?.name || "",
       item.batchNumber || "",
@@ -29,9 +29,9 @@ const DataTableWithMenu = ({ data = [], onEdit, onDelete }) => {
     }
   };
 
- const handleEdit = (item) => {
+  const handleEdit = (item) => {
     if (onEdit) {
-      onEdit(item); // this should call the Inventory's editItem
+      onEdit(item); 
     }
   };
 
@@ -64,9 +64,22 @@ const DataTableWithMenu = ({ data = [], onEdit, onDelete }) => {
     },
     {
       name: "Status",
-      selector: (row) => row.status || "N/A",
       sortable: true,
+      cell: (row) => {
+        const isUnavailable = row.quantity < 1;
+        const statusLabel = isUnavailable ? "Unavailable" : "Available";
+        const statusColor = isUnavailable
+          ? "bg-red-100 text-red-700"
+          : "bg-green-100 text-green-700";
+
+        return (
+          <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColor}`}>
+            {statusLabel}
+          </span>
+        );
+      },
     },
+
     {
       name: "Action",
       cell: (row) => (
@@ -135,7 +148,6 @@ const DataTableWithMenu = ({ data = [], onEdit, onDelete }) => {
 
       {/* Data Table */}
       <DataTable
-        title={<span className="text-lg font-semibold text-gray-800">Inventory List</span>}
         columns={columns}
         data={filteredItems}
         pagination
