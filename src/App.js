@@ -10,7 +10,7 @@ import Login from "./components/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import DepartmentsTable from "./components/Departments/DepartmentsTable";
 import AddDepartment from "./components/Departments/AddDepartment";
-
+import EditDepartment from "./components/Departments/EditDepartment";
 function App() {
   return (
     <>
@@ -43,6 +43,7 @@ function App() {
                    
                     </Route>
                       <Route path="/add-departments" element={<AddDepartment />} />
+                       <Route path="/edit-department/:id" element={<EditDepartment />} />
                     {/* Add more protected routes here */}
                   </Routes>
                   </div>
