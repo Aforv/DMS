@@ -11,6 +11,7 @@ import {
   HiChevronDown,
   HiMoon,
   HiSun,
+  HiOfficeBuilding,
 } from "react-icons/hi";
 import { useAuth } from "../components/AuthContext";
 
@@ -268,6 +269,8 @@ export default function Layout({ children }) {
     },
     { name: "Profile", icon: HiUser, path: "/profile" },
     {name:"Products" ,icon:FaShoppingCart,path:"/products"},
+    { name: "Doctor", icon: HiUser, path: "/doctor" },
+    { name: "Hospitals", icon: HiOfficeBuilding, path: "/hospitals/list" }
   ];
 
   const activeMenuName = findActiveMenuName(menuItems, location.pathname) || "Dashboard";
@@ -290,7 +293,7 @@ export default function Layout({ children }) {
               opacity: collapsed ? 0 : 1,
             }}
           >
-            <h1 className="text-xl font-semibold select-none">Podbic</h1>
+            <h1 className="text-xl font-semibold select-none">Matryx Medisys</h1>
           </div>
           <button
             onClick={() => setCollapsed(!collapsed)}

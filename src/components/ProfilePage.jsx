@@ -7,7 +7,7 @@ export default function ProfilePage() {
   useEffect(() => {
     const getUserInfo = async () => {
       try {
-        const res = await axiosInstance.get('/api/me');
+        const res = await axiosInstance.get('/auth/me');
         setUser(res.data);
       } catch (err) {
         console.error('Failed to fetch user info:', err);
@@ -27,11 +27,5 @@ export default function ProfilePage() {
     </div>
   );
 }
-  // return (
-  //   <div>
-  //     <h1 className="text-2xl font-bold">Profile Page</h1>
-  //     <p className="mt-2 text-gray-600">This is your profile.</p>
-  //     {/* <h1>{user.username}</h1> */}
-  //   </div>
-  // );
+  
 

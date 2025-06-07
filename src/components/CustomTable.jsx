@@ -41,7 +41,6 @@ const customStyles = {
 const CustomTable = () => {
   return (
     <div className="p-6 bg-white shadow-lg rounded-lg">
-      {/* <h2 className="text-xl font-semibold mb-4">User List</h2> */}
       <DataTable
         columns={columns}
         data={data}
