@@ -6,9 +6,8 @@ import EditHospitalForm from "./EditHospitalForm";
 import DeleteHospital from "./DeleteHospital";
 import { HiDotsVertical, HiSearch, HiPencil, HiTrash } from "react-icons/hi";
 import { Dropdown, TextInput } from "flowbite-react";
+import { useAuth } from "../Authentication/AuthContext";
 
-const token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzE4M2UzMDRkYWI3NzA4NDE3ZDM1NyIsImlhdCI6MTc0ODg2OTU3MywiZXhwIjoxNzUxNDYxNTczfQ.GQ8JI7OeUW6dZA63JQLlErGWyTsNLuv1F2WiGRhQTXY";
 
 const customStyles = {
   headRow: {
@@ -42,6 +41,8 @@ const HospitalTable = () => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [hospitalToDelete, setHospitalToDelete] = useState(null);
   const [filterText, setFilterText] = useState("");
+
+  const {token} = useAuth();
 
   const fetchHospitals = async () => {
     try {

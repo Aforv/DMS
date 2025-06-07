@@ -3,14 +3,11 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Home from "./components/Home";
 import ProfilePage from "./components/ProfilePage";
 import Layout from "./navigation/Layout";
 import Overview from "./components/Dashboard/Overview";
-import Daily from "./components/Dashboard/Reports/Daily";
-import Monthly from "./components/Dashboard/Reports/Monthly";
-import Login from "./components/Login";
-import ProtectedRoute from "./components/ProtectedRoute";
+import Login from "./components/Authentication/Login";
+import ProtectedRoute from "./components/Authentication/ProtectedRoute";
 import Inventory from "./components/inventory/Inventory";
 import DataTableWithMenu from "./components/inventory/DataTableWithFlowbite";
 import CategoriesPage from "./components/Categories/CategoriesPage";
@@ -51,7 +48,6 @@ function App() {
               <Layout>
                 <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-5">
                   <Routes>
-                    <Route path="/" element={<Home />} />
                     <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/categories" element={<CategoriesPage />} />
                     <Route path="/add-category" element={<AddCategoryPage />} />
@@ -61,14 +57,6 @@ function App() {
                     <Route path="/products" element={<Products/>}/>
                     <Route path="/productform" element={<ProductsForm/>}/>
                     <Route path="/dashboard/overview" element={<Overview />} />
-                    <Route
-                      path="/dashboard/reports/daily"
-                      element={<Daily />}
-                    />
-                    <Route
-                      path="/dashboard/reports/monthly"
-                      element={<Monthly />}
-                    />
                     <Route path = "/inventory" element = {<Inventory/>}/>
                     <Route path="/doctor" element={<DoctorsTable />} />
                     <Route path="/hospitals/list" element={<HospitalTable />} />

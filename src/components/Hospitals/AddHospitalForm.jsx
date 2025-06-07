@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "../Authentication/AuthContext";
 
 const initialFormState = {
   name: "",
@@ -17,9 +18,7 @@ const AddHospitalForm = ({ showModal, setShowModal, fetchHospitals }) => {
   const [formData, setFormData] = useState(initialFormState);
   const [loading, setLoading] = useState(false);
 
-  const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzE4M2UzMDRkYWI3NzA4NDE3ZDM1NyIsImlhdCI6MTc0ODg2OTU3MywiZXhwIjoxNzUxNDYxNTczfQ.GQ8JI7OeUW6dZA63JQLlErGWyTsNLuv1F2WiGRhQTXY";
-
+ const { token } = useAuth();
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value.trimStart() }));

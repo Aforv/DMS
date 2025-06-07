@@ -55,59 +55,72 @@ const DoctorTable = () => {
             .includes(filterText.toLowerCase())
     );
 
-    const columns = [
-        {
-            name: "Name",
-            selector: (row) => row.name,
-            sortable: true,
-        },
-        {
-            name: "Email",
-            selector: (row) => row.email,
-            sortable: true,
-        },
-        {
-            name: "Phone",
-            selector: (row) => row.phone,
-            sortable: true,
-        },
-        {
-            name: "Specialization",
-            selector: (row) => row.specialization,
-            sortable: true,
-        },
-        {
-            name: "Hospital",
-            selector: (row) => row.hospital,
-        },
-        {
-            name: "Location",
-            selector: (row) => row.location,
-        },
-        {
-            name: "",
-            cell: (row) => (
-                <Dropdown
-                    inline
-                    label={
-                        <HiDotsVertical className="w-5 h-5 text-gray-600 cursor-pointer" />
-                    }
-                    placement="left-start"
-                    arrowIcon={false}
-                >
-                    <Dropdown.Item onClick={() => handleEdit(row)}>
-                        <HiPencil className="w-4 h-4 mr-2" />
-                        Edit
-                    </Dropdown.Item>
-                    <Dropdown.Item onClick={() => handleDelete(row._id)}>
-                        <HiTrash className="w-4 h-4 mr-2 text-red-600" />
-                        Delete
-                    </Dropdown.Item>
-                </Dropdown>
-            ),
-            width: "100px",
-        },
-    ];
+   const columns = [
+    {
+        name: "Name",
+        selector: (row) => row.name,
+        sortable: true,
+        wrap: true,
+        maxWidth: "200px",
+    },
+    {
+        name: "Email",
+        selector: (row) => row.email,
+        sortable: true,
+        wrap: true,
+        maxWidth: "220px",
+    },
+    {
+        name: "Phone",
+        selector: (row) => row.phone,
+        sortable: true,
+        wrap: true,
+        maxWidth: "150px",
+    },
+    {
+        name: "Specialization",
+        selector: (row) => row.specialization,
+        sortable: true,
+        wrap: true,
+        maxWidth: "180px",
+    },
+    {
+        name: "Hospital",
+        selector: (row) => row.hospital,
+        wrap: true,
+        maxWidth: "180px",
+    },
+    {
+        name: "Location",
+        selector: (row) => row.location,
+        wrap: true,
+        maxWidth: "180px",
+    },
+    {
+        name: "",
+        cell: (row) => (
+            <Dropdown
+                inline
+                label={
+                    <HiDotsVertical className="w-5 h-5 text-gray-600 cursor-pointer" />
+                }
+                placement="left-start"
+                arrowIcon={false}
+            >
+                <Dropdown.Item onClick={() => handleEdit(row)}>
+                    <HiPencil className="w-4 h-4 mr-2" />
+                    Edit
+                </Dropdown.Item>
+                <Dropdown.Item onClick={() => handleDelete(row._id)}>
+                    <HiTrash className="w-4 h-4 mr-2 text-red-600" />
+                    Delete
+                </Dropdown.Item>
+            </Dropdown>
+        ),
+        width: "80px",
+    },
+];
+
 
     const customStyles = {
         headRow: {
@@ -141,7 +154,7 @@ const DoctorTable = () => {
     };
 
     return (
-        <div className="p-6 bg-white rounded-lg shadow-sm">
+        <div className="p-6 bg-white rounded-lg shadow-sm overflow-x-auto">
             <div className="grid grid-cols-3 items-center mb-4">
 
                 <div className="flex justify-start">

@@ -15,8 +15,10 @@ import {
   HiOfficeBuilding,
   HiUsers,
 } from "react-icons/hi";
+
 import { RiFoldersLine } from "react-icons/ri";
-import { useAuth } from "../components/AuthContext";
+import { useAuth } from "../components/Authentication/AuthContext";
+
 
 function UserProfileMenu() {
   const { logout } = useAuth();
@@ -254,21 +256,21 @@ export default function Layout({ children }) {
   }, [dark]);
 
   const menuItems = [
-    { name: "Home", icon: HiHome, path: "/" },
     {
       name: "Dashboard",
       icon: HiViewGrid,
-      subItems: [
-        { name: "Overview", icon: HiChartBar, path: "/dashboard/overview" },
-        {
-          name: "Reports",
-          icon: HiDocumentReport,
-          subItems: [
-            { name: "Daily", icon: HiDocumentReport, path: "/dashboard/reports/daily" },
-            { name: "Monthly", icon: HiDocumentReport, path: "/dashboard/reports/monthly" },
-          ],
-        },
-      ],
+      // subItems: [
+      //   { name: "Overview", icon: HiChartBar, path: "/dashboard/overview" },
+      //   {
+      //     name: "Reports",
+      //     icon: HiDocumentReport,
+      //     subItems: [
+      //       { name: "Daily", icon: HiDocumentReport, path: "/dashboard/reports/daily" },
+      //       { name: "Monthly", icon: HiDocumentReport, path: "/dashboard/reports/monthly" },
+      //     ],
+      //   },
+      // ],
+      path: "/dashboard/overview"
     },
     { name: "Profile", icon: HiUser, path: "/profile" },
     { name: "Hospitals", icon: HiOfficeBuilding, path: "/hospitals/list" },
