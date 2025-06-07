@@ -1,7 +1,7 @@
 "use client";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
 import ProfilePage from "./components/ProfilePage";
 import Layout from "./navigation/Layout";
@@ -10,6 +10,8 @@ import Daily from "./components/Dashboard/Reports/Daily";
 import Monthly from "./components/Dashboard/Reports/Monthly";
 import Login from "./components/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Products from "./components/Products";
+import ProductsForm from "./components/ProductsForm";
 import DoctorsTable from "./components/Doctor/DoctorTable";
 import HospitalTable from "./components/Hospitals/HospitalTable";
 
@@ -42,6 +44,8 @@ function App() {
                   <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/profile" element={<ProfilePage />} />
+                    <Route path="/products" element={<Products/>}/>
+                    <Route path="/productform" element={<ProductsForm/>}/>
                     <Route path="/dashboard/overview" element={<Overview />} />
                     <Route
                       path="/dashboard/reports/daily"

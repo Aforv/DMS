@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import { FaShoppingCart } from "react-icons/fa";
 import {
   HiHome,
   HiUser,
@@ -267,6 +268,7 @@ export default function Layout({ children }) {
       ],
     },
     { name: "Profile", icon: HiUser, path: "/profile" },
+    {name:"Products" ,icon:FaShoppingCart,path:"/products"},
     { name: "Doctor", icon: HiUser, path: "/doctor" },
     { name: "Hospitals", icon: HiOfficeBuilding, path: "/hospitals/list" }
   ];
