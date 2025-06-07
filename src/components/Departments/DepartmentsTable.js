@@ -4,7 +4,7 @@ import axios from "axios";
 import { FiEdit2 } from "react-icons/fi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { BsThreeDotsVertical } from "react-icons/bs";
-
+import { useNavigate } from "react-router-dom"; // Assuming you're using react-router-dom for navigation
 
 const DepartmentsTable = () => {
   const [departments, setDepartments] = useState([]);
@@ -12,7 +12,7 @@ const DepartmentsTable = () => {
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [dropdownOpenRow, setDropdownOpenRow] = useState(null); // ✅ individual row control
- 
+ const navigate = useNavigate(); // Assuming you're using react-router-dom for navigation
   const token = localStorage.getItem("myToken");
 
   const fetchDepartments = async () => {
@@ -163,7 +163,7 @@ const DepartmentsTable = () => {
           className="px-4 py-2 border border-gray-300 rounded-md w-full md:w-1/3 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       <button
-  onClick={() => setShowModal(true)}
+   onClick={() => navigate("/add-departments")}
   className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
 >
   + Add Department
