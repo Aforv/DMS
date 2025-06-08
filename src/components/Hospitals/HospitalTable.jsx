@@ -7,6 +7,7 @@ import DeleteHospital from "./DeleteHospital";
 import { HiDotsVertical, HiSearch, HiPencil, HiTrash } from "react-icons/hi";
 import { Dropdown, TextInput } from "flowbite-react";
 import { useAuth } from "../Authentication/AuthContext";
+import axiosInstance from "../../utils/axiosInstancenew";
 
 
 const customStyles = {
@@ -47,7 +48,7 @@ const HospitalTable = () => {
   const fetchHospitals = async () => {
     try {
       setError("");
-      const response = await axios.get("http://43.250.40.133:5005/api/v1/hospitals", {
+      const response = await axiosInstance.get("http://43.250.40.133:5005/api/v1/hospitals", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setHospitalData(response.data.data);
@@ -75,7 +76,7 @@ const HospitalTable = () => {
 
   const confirmDelete = async () => {
     try {
-      await axios.delete(
+      await axiosInstance.delete(
         `http://43.250.40.133:5005/api/v1/hospitals/${hospitalToDelete._id}`,
         {
           headers: {
