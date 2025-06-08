@@ -267,3 +267,4 @@ const PhysicalCountsTable = () => {
 };
 
 export default PhysicalCountsTable;
+
