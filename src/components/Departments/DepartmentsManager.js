@@ -153,8 +153,7 @@ function DepartmentsManager() {
   // New: Delete function calling the DELETE API and updating UI
   const handleDelete = async (id) => {
     if (!id) return;
-    if (!window.confirm("Are you sure you want to delete this department?")) return;
-
+    
     try {
       await axios.delete(
         `http://43.250.40.133:5005/api/v1/departments/${id}`,
@@ -283,7 +282,7 @@ function DepartmentsManager() {
               >
                 Cancel
               </Button>
-              <Button color="blue" type="submit">
+              <Button color="green" type="submit">
                 {isEdit ? "Update Department" : "Add Department"}
               </Button>
             </div>
