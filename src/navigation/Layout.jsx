@@ -17,6 +17,7 @@ import {
 } from "react-icons/hi";
 
 import { RiFoldersLine } from "react-icons/ri";
+import { HomeIcon } from "@heroicons/react/16/solid";
 import { useAuth } from "../components/Authentication/AuthContext";
 
 
@@ -279,6 +280,7 @@ export default function Layout({ children }) {
     { name: "Categories", icon: RiFoldersLine, path: "/categories" }, 
     { name:"Products" ,icon:FaShoppingCart,path:"/products"},
     { name: "Doctor", icon: HiUser, path: "/doctor" },
+    { name: "InhouseInventory", icon: HomeIcon, path: "/inhouseinventory" },
   ];
 
   const activeMenuName = findActiveMenuName(menuItems, location.pathname) || "Dashboard";

@@ -20,6 +20,7 @@ import ProductsForm from "./components/Products/ProductsForm";
 import DoctorsTable from "./components/Doctor/DoctorTable";
 import HospitalTable from "./components/Hospitals/HospitalTable";
 import UsersTable from "./components/UserManagement/UsersTable";
+import InhouseInventory from "./components/inhouseInventory/InhouseInventory";
 
 function App() {
   return (
@@ -61,6 +62,7 @@ function App() {
                     <Route path="/doctor" element={<DoctorsTable />} />
                     <Route path="/hospitals/list" element={<HospitalTable />} />
                     <Route path="/users/list" element={<UsersTable />} />
+                    <Route path="/inhouseinventory" element={<InhouseInventory/>} />
                     
                     {/* Add more protected routes here */}
                   </Routes>
