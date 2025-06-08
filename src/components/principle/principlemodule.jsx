@@ -14,6 +14,7 @@ import { HiSearch } from "react-icons/hi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Papa from "papaparse";
+import { useAuth } from "../Authentication/AuthContext";
 
 function PrinciplesModule() {
   const [openModal, setOpenModal] = useState(false);
