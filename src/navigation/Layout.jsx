@@ -279,6 +279,7 @@ export default function Layout({ children }) {
     { name: "Categories", icon: RiFoldersLine, path: "/categories" }, 
     { name:"Products" ,icon:FaShoppingCart,path:"/products"},
     { name: "Doctor", icon: HiUser, path: "/doctor" },
+    { name: "Invoices", icon: HiOfficeBuilding, path: "/invoices/list" },
   ];
 
   const activeMenuName = findActiveMenuName(menuItems, location.pathname) || "Dashboard";
