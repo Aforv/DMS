@@ -20,6 +20,8 @@ import ProductsForm from "./components/Products/ProductsForm";
 import DoctorsTable from "./components/Doctor/DoctorTable";
 import HospitalTable from "./components/Hospitals/HospitalTable";
 import UsersTable from "./components/UserManagement/UsersTable";
+import PrinciplesModule from "./components/principle/principlemodule";
+import DataTableWithMenuPrinciple from "./components/principle/dataTableWithFlowbite";
 
 function App() {
   return (
@@ -61,6 +63,8 @@ function App() {
                     <Route path="/doctor" element={<DoctorsTable />} />
                     <Route path="/hospitals/list" element={<HospitalTable />} />
                     <Route path="/users/list" element={<UsersTable />} />
+                    <Route path="/principle" element={<PrinciplesModule />} />
+                    <Route path="/principle/list" element={< DataTableWithMenuPrinciple/>} />
                     
                     {/* Add more protected routes here */}
                   </Routes>
