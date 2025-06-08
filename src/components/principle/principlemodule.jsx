@@ -30,10 +30,11 @@ function PrinciplesModule() {
   const [isEdit, setIsEdit] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const {token} = useAuth();
 
   const axiosConfig = () => ({
     headers: {
-      Authorization: `Bearer ${"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzE4M2UzMDRkYWI3NzA4NDE3ZDM1NyIsImlhdCI6MTc0OTEyOTA2NCwiZXhwIjoxNzUxNzIxMDY0fQ.CUIQgfi6wN15fTDCN0bT8ycSD6v6S_72Ive9Zu8sgZY"}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
