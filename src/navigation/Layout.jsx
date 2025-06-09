@@ -280,6 +280,7 @@ export default function Layout({ children }) {
     { name:"Products" ,icon:FaShoppingCart,path:"/products"},
     { name: "Doctor", icon: HiUser, path: "/doctor" },
     { name: "Invoices", icon: HiOfficeBuilding, path: "/invoices/list" },
+    { name: "Physical Counts", icon: HiUser, path: "/physicalcount/list" },
   ];
 
   const activeMenuName = findActiveMenuName(menuItems, location.pathname) || "Dashboard";
