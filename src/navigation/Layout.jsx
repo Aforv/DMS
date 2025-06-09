@@ -10,6 +10,7 @@ import {
   HiChartBar,
   HiDocumentReport,
   HiChevronDown,
+  HiOutlineLibrary,
   HiMoon,
   HiSun,
   HiOfficeBuilding,
@@ -279,6 +280,7 @@ export default function Layout({ children }) {
     { name: "Categories", icon: RiFoldersLine, path: "/categories" }, 
     { name:"Products" ,icon:FaShoppingCart,path:"/products"},
     { name: "Doctor", icon: HiUser, path: "/doctor" },
+     {name:"Adjustments",icon:HiOutlineLibrary,path:"/inventoryadjustment"}
   ];
 
   const activeMenuName = findActiveMenuName(menuItems, location.pathname) || "Dashboard";
