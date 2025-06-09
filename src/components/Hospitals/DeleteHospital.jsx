@@ -15,7 +15,7 @@ const DeleteHospitalConfirmation = ({
   };
 
   return (
-<div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 border-radius">
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 border-radius">
   <div
     className={`bg-white w-full rounded-2xl
       sm:max-w-md shadow-xl transition-transform duration-2000 ease-in-out ${
