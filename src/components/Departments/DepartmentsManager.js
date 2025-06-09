@@ -5,7 +5,7 @@ import {
   DrawerHeader,
   Drawer,
   Textarea,
-  Select,
+ 
   Dropdown,
 } from "flowbite-react";
 import { useEffect, useState } from "react";
@@ -14,6 +14,7 @@ import DataTableWithMenu from "./DataTableWithMenu";
 import { HiSearch } from "react-icons/hi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "../Authentication/AuthContext";
 
 function DepartmentsManager() {
   const [openModal, setOpenModal] = useState(false);
@@ -31,25 +32,23 @@ function DepartmentsManager() {
   const [isEdit, setIsEdit] = useState(false);
   const [userList, setUserList] = useState([]);
   const [departmentsList, setDepartmentsList] = useState([]);
+  const { token } = useAuth();
 
-  const axiosConfig = () => ({
-    headers: {
-      Authorization: `Bearer ${
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzE4M2UzMDRkYWI3NzA4NDE3ZDM1NyIsImlhdCI6MTc0ODg1MzE0OSwiZXhwIjoxNzUxNDQ1MTQ5fQ.hEqPUqmbs1poYpDaQFz4bkcRUPEB34rZhKWD_riq_ms"
-      }`,
-    },
-  });
+  // ✅ Fixed axiosConfig definition
+  
 
   const handleExport = () => {
-    // Placeholder export logic
     console.log("Export clicked");
+    toast.info("Export feature coming soon!");
   };
 
   const fetchData = async () => {
     try {
       const res = await axios.get(
         "http://43.250.40.133:5005/api/v1/departments",
-        axiosConfig()
+       { headers: {
+      Authorization: `Bearer ${token}`,}
+    },
       );
       if (res.data?.data) setDataList(res.data.data);
     } catch (error) {
@@ -61,8 +60,12 @@ function DepartmentsManager() {
   const fetchUsersAndDepartments = async () => {
     try {
       const [usersRes, deptsRes] = await Promise.all([
-        axios.get("http://43.250.40.133:5005/api/v1/users", axiosConfig()),
-        axios.get("http://43.250.40.133:5005/api/v1/departments", axiosConfig()),
+        axios.get("http://43.250.40.133:5005/api/v1/users", { headers: {
+      Authorization: `Bearer ${token}`,}
+    },),
+        axios.get("http://43.250.40.133:5005/api/v1/departments", { headers: {
+      Authorization: `Bearer ${token}`,}
+    },),
       ]);
       setUserList(usersRes.data?.data || []);
       setDepartmentsList(deptsRes.data?.data || []);
@@ -105,14 +108,18 @@ function DepartmentsManager() {
         await axios.put(
           `http://43.250.40.133:5005/api/v1/departments/${formData._id}`,
           formData,
-          axiosConfig()
+          { headers: {
+      Authorization: `Bearer ${token}`,}
+    },
         );
         toast.success("Department updated successfully!");
       } else {
         await axios.post(
           "http://43.250.40.133:5005/api/v1/departments",
           formData,
-          axiosConfig()
+          { headers: {
+      Authorization: `Bearer ${token}`,}
+    },
         );
         toast.success("Department added successfully!");
       }
@@ -150,14 +157,14 @@ function DepartmentsManager() {
     setOpenModal(true);
   };
 
-  // New: Delete function calling the DELETE API and updating UI
   const handleDelete = async (id) => {
     if (!id) return;
-    
     try {
       await axios.delete(
         `http://43.250.40.133:5005/api/v1/departments/${id}`,
-        axiosConfig()
+         { headers: {
+      Authorization: `Bearer ${token}`,}
+    },
       );
       toast.success("Department deleted successfully!");
       fetchData();
@@ -193,7 +200,9 @@ function DepartmentsManager() {
             <Dropdown.Item onClick={handleExport}>Export</Dropdown.Item>
             <Dropdown.Item>Import</Dropdown.Item>
           </Dropdown>
-          <Button  color="blue" onClick={() => setOpenModal(true)}>Add Department</Button>
+          <Button color="blue" onClick={() => setOpenModal(true)}>
+            Add Department
+          </Button>
         </div>
       </div>
 
@@ -293,14 +302,10 @@ function DepartmentsManager() {
       <DataTableWithMenu
         data={filteredList}
         onEdit={editItem}
-        onDelete={handleDelete} // Pass delete handler here
+        onDelete={handleDelete}
       />
     </>
   );
 }
 
 export default DepartmentsManager;
-
-
-
-
