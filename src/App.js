@@ -22,6 +22,7 @@ import HospitalTable from "./components/Hospitals/HospitalTable";
 import UsersTable from "./components/UserManagement/UsersTable";
 import PrinciplesModule from "./components/principle/principlemodule";
 import DataTableWithMenuPrinciple from "./components/principle/dataTableWithFlowbite";
+import DepartmentsManager from "./components/Departments/DepartmentsManager";
 import InvoiceTable from "./components/Invoices/InvoiceTable";
 import AddInvoiceForm from "./components/Invoices/AddInvoiceForm";
 import InventoryAdjustments from "./components/Inventory Adjustments/InventoryAdjustment";
@@ -70,6 +71,7 @@ function App() {
                     <Route path="/users/list" element={<UsersTable />} />
                     <Route path="/principle" element={<PrinciplesModule />} />
                     <Route path="/principle/list" element={< DataTableWithMenuPrinciple/>} />
+                    <Route path="/department" element={<DepartmentsManager />} />
                     <Route path="/invoices/list" element={<InvoiceTable />} />
                     <Route path="/invoices/addinvoiceform" element={<AddInvoiceForm />} />
                     <Route path="/inventoryadjustment" element={<InventoryAdjustments/>}/>
