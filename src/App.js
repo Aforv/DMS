@@ -20,6 +20,7 @@ import ProductsForm from "./components/Products/ProductsForm";
 import DoctorsTable from "./components/Doctor/DoctorTable";
 import HospitalTable from "./components/Hospitals/HospitalTable";
 import UsersTable from "./components/UserManagement/UsersTable";
+import DepartmentsManager from "./components/Departments/DepartmentsManager";
 import InvoiceTable from "./components/Invoices/InvoiceTable";
 import AddInvoiceForm from "./components/Invoices/AddInvoiceForm";
 import InventoryAdjustments from "./components/Inventory Adjustments/InventoryAdjustment";
@@ -66,6 +67,7 @@ function App() {
                     <Route path="/hospitals/list" element={<HospitalTable />} />
                      <Route path="/physicalcount/list" element={<PhysicalCountsTable />} />
                     <Route path="/users/list" element={<UsersTable />} />
+                    <Route path="/department" element={<DepartmentsManager />} />
                     <Route path="/invoices/list" element={<InvoiceTable />} />
                     <Route path="/invoices/addinvoiceform" element={<AddInvoiceForm />} />
                     <Route path="/inventoryadjustment" element={<InventoryAdjustments/>}/>
