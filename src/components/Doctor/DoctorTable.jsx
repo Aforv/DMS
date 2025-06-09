@@ -1,205 +1,251 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
-import { TextInput, Dropdown } from "flowbite-react";
-import {
-    HiSearch,
-    HiTrash,
-    HiPencil,
-    HiDotsVertical,
-} from "react-icons/hi";
 import axios from "axios";
+import { HiDotsVertical, HiSearch, HiPencil, HiTrash } from "react-icons/hi";
+import { Dropdown, TextInput } from "flowbite-react";
+import { useAuth } from "../Authentication/AuthContext";
+import AddDoctorForm from "./AddDoctorForm";
+import EditDoctorForm from "./EditDoctorForm";
+import DeleteDoctorConfirmation from "./DeleteDoctor";
+
+
+const customStyles = {
+  headRow: {
+    style: {
+      backgroundColor: "#b3d9ff",
+      color: "#111827",
+      fontWeight: "bold",
+    },
+  },
+  rows: {
+    style: {
+      backgroundColor: "#fff",
+      borderBottom: "1px solid #e5e7eb",
+    },
+  },
+  pagination: {
+    style: {
+      borderTop: "1px solid #e5e7eb",
+      padding: "16px",
+    },
+  },
+};
 
 const DoctorTable = () => {
-    const [filterText, setFilterText] = useState("");
-    const [doctors, setDoctors] = useState([]);
-    const [showAddDoctor, setShowAddDoctor] = useState(false);
+  const [doctorData, setDoctorData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [filterText, setFilterText] = useState("");
+  const [showAddDoctor, setShowAddDoctor] = useState(false);
+const [showEditForm, setShowEditForm] = useState(false);
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+const [doctorToDelete, setDoctorToDelete] = useState(null);
 
 
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzE4M2UzMDRkYWI3NzA4NDE3ZDM1NyIsImlhdCI6MTc0OTI2OTY4MiwiZXhwIjoxNzUxODYxNjgyfQ.VnXafM7C6nt5QOJbTx9OqC8h9q7R2I__qRequKQ2Klc";
-    // Replace with JWT token
+  const { token } = useAuth();
 
-    useEffect(() => {
-        const fetchDoctors = async () => {
-            try {
-                const res = await axios.get(
-                    "http://43.250.40.133:5005/api/v1/doctors?page=1&limit=10",
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                );
-                setDoctors(res.data.data || []);
-            } catch (err) {
-                console.error("Error fetching doctors:", err);
-            }
-        };
+  const fetchDoctors = async () => {
+    try {
+      setError("");
+      setLoading(true);
+      const response = await axios.get("http://43.250.40.133:5005/api/v1/doctors", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setDoctorData(response.data.data);
+    } catch (err) {
+      console.error("Error fetching doctors:", err);
+      setError("Failed to fetch doctors.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        fetchDoctors();
-    }, []);
+  useEffect(() => {
+    fetchDoctors();
+  }, []);
 
-    const handleDelete = (id) => {
-        if (window.confirm("Are you sure you want to delete this doctor?")) {
-            setDoctors((prev) => prev.filter((doc) => doc._id !== id));
-        }
-    };
-
-    const handleEdit = (doctor) => {
-        alert(`Edit doctor: ${doctor.name}`);
-    };
-
-    const filteredItems = doctors.filter((item) =>
-        [item.name, item.email, item.specialization]
-            .join(" ")
-            .toLowerCase()
-            .includes(filterText.toLowerCase())
-    );
-
-   const columns = [
-    {
-        name: "Name",
-        selector: (row) => row.name,
-        sortable: true,
-        wrap: true,
-        maxWidth: "200px",
-    },
-    {
-        name: "Email",
-        selector: (row) => row.email,
-        sortable: true,
-        wrap: true,
-        maxWidth: "220px",
-    },
-    {
-        name: "Phone",
-        selector: (row) => row.phone,
-        sortable: true,
-        wrap: true,
-        maxWidth: "150px",
-    },
-    {
-        name: "Specialization",
-        selector: (row) => row.specialization,
-        sortable: true,
-        wrap: true,
-        maxWidth: "180px",
-    },
-    {
-        name: "Hospital",
-        selector: (row) => row.hospital,
-        wrap: true,
-        maxWidth: "180px",
-    },
-    {
-        name: "Location",
-        selector: (row) => row.location,
-        wrap: true,
-        maxWidth: "180px",
-    },
-    {
-        name: "",
-        cell: (row) => (
-            <Dropdown
-                inline
-                label={
-                    <HiDotsVertical className="w-5 h-5 text-gray-600 cursor-pointer" />
-                }
-                placement="left-start"
-                arrowIcon={false}
-            >
-                <Dropdown.Item onClick={() => handleEdit(row)}>
-                    <HiPencil className="w-4 h-4 mr-2" />
-                    Edit
-                </Dropdown.Item>
-                <Dropdown.Item onClick={() => handleDelete(row._id)}>
-                    <HiTrash className="w-4 h-4 mr-2 text-red-600" />
-                    Delete
-                </Dropdown.Item>
-            </Dropdown>
-        ),
-        width: "80px",
-    },
-];
-
-
-    const customStyles = {
-        headRow: {
-            style: {
-                backgroundColor: "lightblue",
-                borderBottomWidth: "1px",
-                fontWeight: 600,
-            },
-        },
-        headCells: {
-            style: {
-                fontSize: "14px",
-                color: "#111827",
-                paddingLeft: "16px",
-                paddingRight: "16px",
-            },
-        },
-        rows: {
-            style: {
-                fontSize: "14px",
-                color: "#374151",
-                backgroundColor: "white",
-            },
-        },
-        pagination: {
-            style: {
-                borderTop: "1px solid #e5e7eb",
-                padding: "16px",
-            },
-        },
-    };
-
+  const filteredData = doctorData.filter((doctor) => {
+    const text = filterText.toLowerCase();
     return (
-        <div className="p-6 bg-white rounded-lg shadow-sm overflow-x-auto">
-            <div className="grid grid-cols-3 items-center mb-4">
-
-                <div className="flex justify-start">
-                    <TextInput
-                        icon={HiSearch}
-                        placeholder="Search doctors..."
-                        value={filterText}
-                        onChange={(e) => setFilterText(e.target.value)}
-                        className="w-64"
-                    />
-                </div>
-
-                <div className="flex justify-center">
-                    <h2 className="text-lg font-semibold text-gray-800">Doctor List</h2>
-                </div>
-
-
-                <div className="flex justify-end">
-                    <button
-                        onClick={() => setShowAddDoctor(true)}
-                        className="font-medium py-2 px-4 rounded"
-                        style={{
-                            backgroundColor: "lightblue",
-                            color: "black",
-                        }}
-                    >
-                        Add Doctor
-                    </button>
-
-                </div>
-            </div>
-
-            <DataTable
-                columns={columns}
-                data={filteredItems}
-                pagination
-                highlightOnHover
-                striped
-                responsive
-                customStyles={customStyles}
-                paginationPerPage={5}
-                paginationRowsPerPageOptions={[5, 10, 15]}
-            />
-        </div>
+      doctor.name?.toLowerCase().includes(text) ||
+      doctor.email?.toLowerCase().includes(text) ||
+      doctor.phone?.toLowerCase().includes(text) ||
+      doctor.specialization?.name?.toLowerCase().includes(text) ||
+      doctor.hospital?.name?.toLowerCase().includes(text) ||
+      doctor.location?.toLowerCase().includes(text)
     );
+  });
+
+  const handleEdit = (doctor) => {
+    setSelectedDoctor(doctor);
+    setShowEditForm(true);
+  };
+  const handleDeleteClick = (doctor) => {
+  setDoctorToDelete(doctor);
+  setShowDeleteConfirm(true);
+};
+
+const handleConfirmDelete = async (doctorId) => {
+  try {
+    await axios.delete(`http://43.250.40.133:5005/api/v1/doctors/${doctorId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    fetchDoctors();
+  } catch (error) {
+    console.error("Delete failed:", error);
+    throw error; // re-throw to catch in DeleteDoctorConfirmation
+  }
+};
+
+
+  const handleExport = () => {
+    const dataToExport = filteredData.map((doctor, index) => ({
+      "SL.NO": index + 1,
+      Name: doctor.name || "",
+      Email: doctor.email || "",
+      Phone: doctor.phone || "",
+      Specialization: doctor.specialization?.name || "",
+      Hospital: doctor.hospital?.name || "",
+      Location: doctor.location || "",
+    }));
+
+    if (dataToExport.length === 0) {
+      alert("No data available to export.");
+      return;
+    }
+
+    const headers = Object.keys(dataToExport[0]);
+    const csvRows = [headers.join(",")];
+
+    for (const row of dataToExport) {
+      const values = headers.map((header) => `"${row[header]}"`);
+      csvRows.push(values.join(","));
+    }
+
+    const csvContent = csvRows.join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "doctor_list.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const columns = [
+    { name: "SL.NO", selector: (_, index) => index + 1, width: "80px" },
+    { name: "Name", selector: (row) => row.name, sortable: true },
+    { name: "Email", selector: (row) => row.email },
+    { name: "Phone", selector: (row) => row.phone },
+    {
+  name: "Specialization",
+  selector: (row) => row.specialization || "N/A",
+  sortable: true,
+},
+    { name: "Hospital", selector: (row) => row.hospital?.name || "N/A" },
+    { name: "Location", selector: (row) => row.location || "N/A" },
+    {
+      name: "Actions",
+      cell: (row) => (
+        <Dropdown
+          inline
+          label={<HiDotsVertical className="w-5 h-5 text-gray-600 cursor-pointer" />}
+          placement="left-start"
+          arrowIcon={false}
+        >
+          <Dropdown.Item onClick={() => handleEdit(row)}>
+            <HiPencil className="w-4 h-4 mr-2" /> Edit
+          </Dropdown.Item>
+         <Dropdown.Item
+  onClick={() => handleDeleteClick(row)}
+  className="text-red-600"
+>
+  <HiTrash className="w-4 h-4 mr-2" /> Delete
+</Dropdown.Item>
+
+        </Dropdown>
+        
+      ),
+      button: true,
+      width: "100px",
+    },
+  ];
+
+  return (
+    <div className="p-6 bg-white rounded-lg border border-gray-200 shadow-md">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-4">
+        <TextInput
+          icon={HiSearch}
+          placeholder="Search doctors..."
+          value={filterText}
+          onChange={(e) => setFilterText(e.target.value)}
+          className="w-72"
+        />
+
+        <div className="text-3xl font-semibold text-blue-800 mb-4 text-center">
+          Doctor List
+        </div>
+
+        <div className="flex items-center gap-3">
+          <Dropdown label="Actions">
+            <Dropdown.Item onClick={handleExport}>Export</Dropdown.Item>
+            <Dropdown.Item>Import</Dropdown.Item>
+          </Dropdown>
+
+          <button
+            onClick={() => setShowAddDoctor(true)}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md shadow transition duration-200"
+          >
+            Add Doctor
+          </button>
+        </div>
+      </div>
+
+      {error && (
+        <div className="mb-4 p-4 text-red-700 bg-red-100 rounded-md border border-red-300">
+          {error}
+        </div>
+      )}
+
+      <DataTable
+        columns={columns}
+        data={filteredData}
+        pagination
+        highlightOnHover
+        striped
+        customStyles={customStyles}
+        progressPending={loading}
+        progressComponent={<div className="text-gray-600">Loading doctors...</div>}
+        noDataComponent={
+          error ? "Unable to display data due to an error." : "No doctor records found."
+        }
+      />
+
+      <AddDoctorForm
+        show={showAddDoctor}
+        setShow={setShowAddDoctor}
+        fetchDoctors={fetchDoctors}
+      />
+
+     <EditDoctorForm
+        show={showEditForm}
+        setShow={setShowEditForm}
+        fetchDoctors={fetchDoctors}
+        selectedDoctor={selectedDoctor}
+      />
+      <DeleteDoctorConfirmation
+  isOpen={showDeleteConfirm}
+  onClose={() => setShowDeleteConfirm(false)}
+  doctor={doctorToDelete}
+  onConfirm={handleConfirmDelete}
+/>
+
+
+    </div>
+  );
 };
 
 export default DoctorTable;
