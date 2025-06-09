@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import AddPhysicalCountForm from "./AddPhysicalCountForm";
-// import EditPhysicalCountForm from "./EditPhysicalCountForm";
+import EditPhysicalCountForm from "./EditPhysicalCountForm";
 // import DeletePhysicalCount from "./DeletePhysicalCount";
 import axios from "axios";
 import { HiDotsVertical, HiSearch, HiPencil, HiTrash } from "react-icons/hi";
@@ -249,14 +249,14 @@ const PhysicalCountsTable = () => {
         fetchData={fetchData}
       />
 
-      {/* <EditPhysicalCountForm
+      <EditPhysicalCountForm
         show={editModalOpen}
         onClose={() => setEditModalOpen(false)}
         item={selectedItem}
         onUpdate={fetchData}
       />
 
-      <DeletePhysicalCount
+      {/* <DeletePhysicalCount
         isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
         onConfirm={confirmDelete}
