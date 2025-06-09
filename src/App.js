@@ -20,6 +20,7 @@ import ProductsForm from "./components/Products/ProductsForm";
 import DoctorsTable from "./components/Doctor/DoctorTable";
 import HospitalTable from "./components/Hospitals/HospitalTable";
 import UsersTable from "./components/UserManagement/UsersTable";
+import InhouseInventory from "./components/inhouseInventory/InhouseInventory";
 import PrinciplesModule from "./components/principle/principlemodule";
 import DataTableWithMenuPrinciple from "./components/principle/dataTableWithFlowbite";
 import DepartmentsManager from "./components/Departments/DepartmentsManager";
@@ -69,6 +70,7 @@ function App() {
                     <Route path="/hospitals/list" element={<HospitalTable />} />
                      <Route path="/physicalcount/list" element={<PhysicalCountsTable />} />
                     <Route path="/users/list" element={<UsersTable />} />
+                    <Route path = "/inhouseinventory" element = {<InhouseInventory/>}/>
                     <Route path="/principle" element={<PrinciplesModule />} />
                     <Route path="/principle/list" element={< DataTableWithMenuPrinciple/>} />
                     <Route path="/department" element={<DepartmentsManager />} />
