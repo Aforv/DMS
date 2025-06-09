@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { Menu } from '@headlessui/react';
 import { EllipsisVerticalIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import axios from "axios";
+import { TextInput, Dropdown, Button } from "flowbite-react";  // or your UI library
+import { HiSearch } from "react-icons/hi";
 
 const CategoriesPage = () => {
   const navigate = useNavigate();
@@ -110,31 +112,32 @@ const CategoriesPage = () => {
   return (
     <div className="p-6 bg-white rounded-md shadow-md">
       {/* Header */}
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">CATEGORIES</h2>
-        <div className="flex gap-2">
-          <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" onClick={() => navigate("/add-category")}>
-            + Add Categories
-          </button>
-          <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" onClick={() => navigate("/subcategories")}>
-            + Add SubCategories
-          </button>
-          <button className="bg-teal-700 text-white px-4 py-2 rounded hover:bg-teal-800" onClick={() => alert("Export to Excel feature coming soon!")}>
-            + Export to Excel
-          </button>
-        </div>
-      </div>
+     
+      <div className="flex flex-wrap items-center justify-between gap-1 mb-2">
+  <div className="flex-grow max-w-[250px]">
+    <TextInput
+      icon={HiSearch}
+      type="text"
+      placeholder="Search categories..."
+      value={searchTerm}
+       onChange={handleSearch}
+     
+    />
+  </div>
+  <h1 className="text-xl font-bold whitespace-nowrap">Categories</h1>
+  <div className="flex items-center gap-3">
+    <Dropdown label="Actions">
+      <Dropdown.Item onClick={() => alert("Export to Excel feature coming soon!")}>Export</Dropdown.Item>
+    <Dropdown.Item onClick={() => alert("Import to Excel feature coming soon!")}>Import</Dropdown.Item>
 
-      {/* Search */}
-      <div className="mb-4">
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={handleSearch}
-          placeholder="Search Categories..."
-          className="border border-gray-300 rounded-md px-4 py-2 shadow-sm w-[250px]"
-        />
-      </div>
+    </Dropdown>
+    <Button color="blue" onClick={() => navigate("/add-category")}>+ Add Category</Button>
+    <Button color="blue" onClick={() => navigate("/subcategories")}>+ Add SubCategories</Button>
+  </div>
+</div>
+
+
+    
 
       {/* Category List */}
       <div className="bg-white border rounded-md shadow-sm">

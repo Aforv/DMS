@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ImStatsBars2 } from "react-icons/im";
 import { FaShoppingCart } from "react-icons/fa";
+import { MdApartment } from "react-icons/md";
 import {
   HiHome,
   HiUser,
@@ -10,6 +11,7 @@ import {
   HiChartBar,
   HiDocumentReport,
   HiChevronDown,
+  HiOutlineLibrary,
   HiMoon,
   HiSun,
   HiOfficeBuilding,
@@ -279,6 +281,11 @@ export default function Layout({ children }) {
     { name: "Categories", icon: RiFoldersLine, path: "/categories" }, 
     { name:"Products" ,icon:FaShoppingCart,path:"/products"},
     { name: "Doctors", icon: HiUser, path: "/doctor" },
+    { name: "Principle", icon: HiUsers, path: "/principle" },
+    { name: "Department", icon: MdApartment, path: "/department" },
+    { name: "Invoices", icon: HiOfficeBuilding, path: "/invoices/list" },
+    {name:"Adjustments",icon:HiOutlineLibrary,path:"/inventoryadjustment"}
+    { name: "Physical Counts", icon: HiUser, path: "/physicalcount/list" },
   ];
 
   const activeMenuName = findActiveMenuName(menuItems, location.pathname) || "Dashboard";

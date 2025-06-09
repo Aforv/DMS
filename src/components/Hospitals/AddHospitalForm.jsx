@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../Authentication/AuthContext";
+import axiosInstance from "../../utils/axiosInstancenew";
 
 const initialFormState = {
   name: "",
@@ -37,7 +37,7 @@ const AddHospitalForm = ({ showModal, setShowModal, fetchHospitals }) => {
     setLoading(true);
 
     try {
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         "http://43.250.40.133:5005/api/v1/hospitals",
         formData,
         {
