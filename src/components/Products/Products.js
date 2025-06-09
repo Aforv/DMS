@@ -1,6 +1,6 @@
 import React from 'react'
 import { Label,TextInput } from "flowbite-react";
-import { Button,Select } from "flowbite-react";
+import { Button,Select,Dropdown} from "flowbite-react";
 import { useState,useEffect } from 'react';
 import axios from 'axios';
 import { Drawer } from 'flowbite-react';
@@ -12,6 +12,7 @@ import ProductsForm from './ProductsForm'
 import { HiX } from "react-icons/hi";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {useAuth} from '../Authentication/AuthContext';
 
 
 export default function Products() {
@@ -20,6 +21,7 @@ export default function Products() {
   let[editindex,setEditIndex]=useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
+  const {token}=useAuth()
   function onCloseModal() {
     setOpenModal(false); 
     setEditIndex(null)
@@ -116,7 +118,7 @@ setEditIndex(index)
 
 function handleAddandEdit(){
 setLoading(true);
-let token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzE4M2UzMDRkYWI3NzA4NDE3ZDM1NyIsImlhdCI6MTc0ODg1OTAzMywiZXhwIjoxNzUxNDUxMDMzfQ.pVhO4C-UeQSWP-LrweV-riGTlJv_-iMI1H1KZqE4Q20';
+
 setOpenModal(false)
 
 const config = {
@@ -182,7 +184,7 @@ else{
 }
 
 function handledelete(id) {
-  const token ='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzE4M2UzMDRkYWI3NzA4NDE3ZDM1NyIsImlhdCI6MTc0ODg1OTAzMywiZXhwIjoxNzUxNDUxMDMzfQ.pVhO4C-UeQSWP-LrweV-riGTlJv_-iMI1H1KZqE4Q20'; 
+ 
   axios.delete(`http://43.250.40.133:5005/api/v1/products/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`
@@ -247,9 +249,15 @@ function handleExportToExcel() {
     <button className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" onClick={()=>{setOpenModal(true)}}>
       Add Product
     </button>
-    <button className="focus:outline-none text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800" onClick={()=>handleExportToExcel()}>
-      Export to Excel
-    </button>
+
+    <Dropdown label="Actions" color="blue" >
+  <Dropdown.Item onClick={handleExportToExcel} >
+    Export
+  </Dropdown.Item>
+  <Dropdown.Item>
+    Import
+  </Dropdown.Item>
+</Dropdown>
   </div>
 </div>
 

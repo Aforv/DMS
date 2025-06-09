@@ -22,6 +22,10 @@ import HospitalTable from "./components/Hospitals/HospitalTable";
 import UsersTable from "./components/UserManagement/UsersTable";
 import PrinciplesModule from "./components/principle/principlemodule";
 import DataTableWithMenuPrinciple from "./components/principle/dataTableWithFlowbite";
+import InvoiceTable from "./components/Invoices/InvoiceTable";
+import AddInvoiceForm from "./components/Invoices/AddInvoiceForm";
+import InventoryAdjustments from "./components/Inventory Adjustments/InventoryAdjustment";
+import PhysicalCountsTable from "./components/PhysicalCount/PhysicalCountsTable";
 
 function App() {
   return (
@@ -57,15 +61,18 @@ function App() {
                     <Route path="/edit-category/:id" element={<EditCategory />} />
                     <Route path="/edit-subcategory/:id" element={<EditSubCategory />} />
                     <Route path="/products" element={<Products/>}/>
-                    <Route path="/productform" element={<ProductsForm/>}/>
+                     {/** product form do not need route */}
                     <Route path="/dashboard/overview" element={<Overview />} />
                     <Route path = "/inventory" element = {<Inventory/>}/>
                     <Route path="/doctor" element={<DoctorsTable />} />
                     <Route path="/hospitals/list" element={<HospitalTable />} />
+                     <Route path="/physicalcount/list" element={<PhysicalCountsTable />} />
                     <Route path="/users/list" element={<UsersTable />} />
                     <Route path="/principle" element={<PrinciplesModule />} />
                     <Route path="/principle/list" element={< DataTableWithMenuPrinciple/>} />
-                    
+                    <Route path="/invoices/list" element={<InvoiceTable />} />
+                    <Route path="/invoices/addinvoiceform" element={<AddInvoiceForm />} />
+                    <Route path="/inventoryadjustment" element={<InventoryAdjustments/>}/>
                     {/* Add more protected routes here */}
                   </Routes>
                 </div>
