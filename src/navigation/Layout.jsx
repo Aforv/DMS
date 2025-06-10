@@ -286,8 +286,8 @@ export default function Layout({ children }) {
     { name: "Principle", icon: HiUsers, path: "/principle" },
     { name: "Department", icon: MdApartment, path: "/department" },
     { name: "Invoices", icon: HiOfficeBuilding, path: "/invoices/list" },
-    {name:"Adjustments",icon:HiOutlineLibrary,path:"/inventoryadjustment"}
-    { name: "Physical Counts", icon: HiUser, path: "/physicalcount/list" },
+    {name:"Adjustments",icon:HiOutlineLibrary,path:"/inventoryadjustment"},
+    { name: "Physical Counts", icon: HiUser, path: "/physicalcount/list" }
   ];
 
   const activeMenuName = findActiveMenuName(menuItems, location.pathname) || "Dashboard";
