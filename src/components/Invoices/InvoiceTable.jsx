@@ -179,9 +179,9 @@ const InvoiceTable = () => {
       "Due Date": invoice.dueDate
         ? new Date(invoice.dueDate).toLocaleDateString()
         : "N/A",
-      "Total Amount": `₹${invoice.totalAmount ?? 0}`,
-      "Paid Amount": `₹${invoice.paidAmount ?? 0}`,
-      "Balance": `₹${invoice.remainingBalance ?? 0}`,
+      "Total Amount": `${invoice.totalAmount ?? 0}`,
+      "Paid Amount": `${invoice.paidAmount ?? 0}`,
+      "Balance": `${invoice.remainingBalance ?? 0}`,
       "Status": invoice.paymentStatus || "N/A",
     }));
   
@@ -221,7 +221,7 @@ const InvoiceTable = () => {
 <div className="flex justify-start">
                     <TextInput
                         icon={HiSearch}
-                        placeholder="Search by Case No / Patient / Doctor...."
+                        placeholder="Search by Patient / Doctor...."
                         value={filterText}
                         onChange={(e) => setFilterText(e.target.value)}
                         className="w-64"

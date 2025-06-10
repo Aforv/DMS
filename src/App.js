@@ -22,6 +22,7 @@ import HospitalTable from "./components/Hospitals/HospitalTable";
 import UsersTable from "./components/UserManagement/UsersTable";
 import InvoiceTable from "./components/Invoices/InvoiceTable";
 import AddInvoiceForm from "./components/Invoices/AddInvoiceForm";
+import RolesTable from "./components/Roles/RolesTable";
 
 function App() {
   return (
@@ -64,6 +65,7 @@ function App() {
                     <Route path="/hospitals/list" element={<HospitalTable />} />
                     <Route path="/users/list" element={<UsersTable />} />
                     <Route path="/invoices/list" element={<InvoiceTable />} />
+                                        <Route path="/roles/list" element={<RolesTable />} />
                     <Route path="/invoices/addinvoiceform" element={<AddInvoiceForm />} />
                     {/* Add more protected routes here */}
                   </Routes>

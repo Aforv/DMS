@@ -14,6 +14,9 @@ import {
   HiSun,
   HiOfficeBuilding,
   HiUsers,
+  HiKey,
+  HiReceiptTax,
+  HiCurrencyDollar,
 } from "react-icons/hi";
 
 import { RiFoldersLine } from "react-icons/ri";
@@ -279,7 +282,8 @@ export default function Layout({ children }) {
     { name: "Categories", icon: RiFoldersLine, path: "/categories" }, 
     { name:"Products" ,icon:FaShoppingCart,path:"/products"},
     { name: "Doctor", icon: HiUser, path: "/doctor" },
-    { name: "Invoices", icon: HiOfficeBuilding, path: "/invoices/list" },
+    { name: "Invoices", icon: HiReceiptTax, path: "/invoices/list" },
+    { name: "Roles", icon: HiKey, path: "/roles/list" },
   ];
 
   const activeMenuName = findActiveMenuName(menuItems, location.pathname) || "Dashboard";

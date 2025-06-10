@@ -81,7 +81,7 @@ const EditInvoiceForm = ({ show, onClose, invoice, onUpdate,fetchInvoices }) => 
     <>
       <ToastContainer position="top-right" autoClose={3000} />
       <div className="fixed inset-0 z-50 flex justify-end bg-black bg-opacity-40" >
-        <div className="relative w-full max-w-md h-full bg-white shadow-2xl overflow-auto">
+        <div className="relative w-full max-w-md h-full bg-white shadow-2xl overflow-auto" >
           <div className="p-6 relative">
             <button
               className="absolute top-5 right-5 text-gray-500 hover:text-black text-2xl"

@@ -18,7 +18,12 @@ const initialFormState = {
   caseId: "",
 };
 
-const AddInvoiceForm = ({ showModal, setShowModal, fetchInvoices, onClose }) => {
+const AddInvoiceForm = ({
+  showModal,
+  setShowModal,
+  fetchInvoices,
+  onClose,
+}) => {
   const [formData, setFormData] = useState(initialFormState);
   const [loading, setLoading] = useState(false);
   const [cases, setCases] = useState([]);
@@ -95,6 +100,7 @@ const AddInvoiceForm = ({ showModal, setShowModal, fetchInvoices, onClose }) => 
       console.error("Invoice creation failed", error);
     } finally {
       setLoading(false);
+      resetForm();
     }
   };
 
@@ -104,7 +110,7 @@ const AddInvoiceForm = ({ showModal, setShowModal, fetchInvoices, onClose }) => 
     <>
       <ToastContainer position="top-right" autoClose={3000} />
       <div className="fixed inset-0 z-50 flex justify-end bg-black bg-opacity-40">
-        <div className="relative w-full max-w-md h-full bg-white shadow-2xl overflow-auto z-50 p-6">
+        <div className="relative w-full max-w-md h-full bg-white shadow-2xl overflow-auto z-50 p-6" >
           <button
             onClick={() => setShowModal(false)}
             className="absolute top-3 right-3 text-gray-600 hover:text-gray-900 text-2xl"
@@ -119,7 +125,9 @@ const AddInvoiceForm = ({ showModal, setShowModal, fetchInvoices, onClose }) => 
 
           <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Invoice Number</label>
+              <label className="block text-sm font-medium mb-1">
+                Invoice Number
+              </label>
               <input
                 type="text"
                 name="invoiceNumber"
@@ -131,7 +139,9 @@ const AddInvoiceForm = ({ showModal, setShowModal, fetchInvoices, onClose }) => 
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Invoice Date</label>
+              <label className="block text-sm font-medium mb-1">
+                Invoice Date
+              </label>
               <input
                 type="date"
                 name="invoiceDate"
@@ -150,46 +160,58 @@ const AddInvoiceForm = ({ showModal, setShowModal, fetchInvoices, onClose }) => 
                 value={formData.dueDate}
                 onChange={handleChange}
                 required
+                min={formData.invoiceDate} 
                 className="w-full border border-gray-300 px-3 py-2 rounded-md"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Total Amount</label>
+              <label className="block text-sm font-medium mb-1">
+                Total Amount
+              </label>
               <input
                 type="number"
                 name="totalAmount"
                 value={formData.totalAmount}
                 onChange={handleChange}
                 required
+                min={0}
                 className="w-full border border-gray-300 px-3 py-2 rounded-md"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Tax Amount</label>
+              <label className="block text-sm font-medium mb-1">
+                Tax Amount
+              </label>
               <input
                 type="number"
                 name="taxAmount"
                 value={formData.taxAmount}
                 onChange={handleChange}
+                min={0}
                 className="w-full border border-gray-300 px-3 py-2 rounded-md"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Discount Amount</label>
+              <label className="block text-sm font-medium mb-1">
+                Discount Amount
+              </label>
               <input
                 type="number"
                 name="discountAmount"
                 value={formData.discountAmount}
                 onChange={handleChange}
+                min={0}
                 className="w-full border border-gray-300 px-3 py-2 rounded-md"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Payment Type</label>
+              <label className="block text-sm font-medium mb-1">
+                Payment Type
+              </label>
               <select
                 name="paymentType"
                 value={formData.paymentType}
@@ -237,7 +259,7 @@ const AddInvoiceForm = ({ showModal, setShowModal, fetchInvoices, onClose }) => 
                 disabled={loading}
               >
                 {loading ? "Submitting..." : "Add Invoice"}
-                </button>
+              </button>
             </div>
           </form>
         </div>
