@@ -4,12 +4,12 @@ import axios from "axios";
 import AddInvoiceForm from "./AddInvoiceForm";
 import EditInvoiceForm from './EditInvoiceForm'
 import { Dropdown } from "flowbite-react";
-import { HiDotsVertical, HiPencil } from "react-icons/hi"; 
+import { HiDotsVertical, HiPencil,HiEye } from "react-icons/hi"; 
 import { TextInput } from "flowbite-react";
 import {
     HiSearch,
 } from "react-icons/hi";
-
+import ViewInvoiceModal from "./ViewInvoiceModal";
 import { useAuth } from "../Authentication/AuthContext";
 
 
@@ -45,6 +45,8 @@ const InvoiceTable = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [filterText, setFilterText] = useState("");
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+const [viewInvoice, setViewInvoice] = useState(null);
 
 
   const handleUpdate = (updatedInvoice) => {
@@ -121,7 +123,13 @@ const InvoiceTable = () => {
             <HiPencil className="w-4 h-4" />
             <span>Edit</span>
           </Dropdown.Item>
-          
+          <Dropdown.Item
+  onClick={() => handleViewClick(row)}
+  className="flex items-center gap-2 text-sm text-gray-700 hover:bg-gray-100"
+>
+  <HiEye className="w-4 h-4" />
+  <span>View</span>
+</Dropdown.Item>
         </Dropdown>
       ),
       button: true,
@@ -161,6 +169,12 @@ const InvoiceTable = () => {
     
     fetchInvoices();
   }, []);
+
+  const handleViewClick = (invoice) => {
+  setViewInvoice(invoice);
+  setViewModalOpen(true);
+};
+
 
 
   const handleExport = () => {
@@ -228,7 +242,7 @@ const InvoiceTable = () => {
                     />
                 </div>
 
-  <h2 className="text-xl font-semibold text-gray-800 flex-shrink-0 ml-[-8px]">Invoice List</h2>
+                  <div className="text-3xl font-semibold text-blue-800 mb-4 text-center">Invoice List</div>
   <div className="flex items-center gap-3">
           <Dropdown label="Actions">
             <Dropdown.Item onClick={handleExport}>Export</Dropdown.Item>
@@ -277,6 +291,13 @@ const InvoiceTable = () => {
         onUpdate={handleUpdate}
         fetchInvoices={fetchInvoices}
        />
+
+
+<ViewInvoiceModal
+  show={viewModalOpen}
+  onClose={() => setViewModalOpen(false)}
+  invoice={viewInvoice}
+/>
 
 
     </div>

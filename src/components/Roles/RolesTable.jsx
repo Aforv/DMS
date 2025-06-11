@@ -240,9 +240,11 @@ const confirmDelete = async () => {
           />
         </div>
 
-        <h2 className="text-xl font-semibold text-gray-800 flex-shrink-0 ml-[-8px]">
+        {/* <h2 className="text-xl font-semibold text-gray-800 flex-shrink-0 ml-[-8px]">
           Roles List
-        </h2>
+        </h2> */}
+
+                <div className="text-3xl font-semibold text-blue-800 mb-4 text-center">Roles List</div>
 
         <div className="flex items-center gap-3">
           <Dropdown label="Actions">

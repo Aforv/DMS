@@ -21,7 +21,7 @@ export default function Login() {
 
     if (res.success) {
       navigate(from, { replace: true });
-      localStorage.setItem("Token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzE4M2UzMDRkYWI3NzA4NDE3ZDM1NyIsImlhdCI6MTc0OTAwODQwMCwiZXhwIjoxNzUxNjAwNDAwfQ.Ox1GAlSDEXAPau98gmpizt_gXuMDAijA8K-mdigdLCQ"); // Store username in localStorage
+      //localStorage.setItem("Token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzE4M2UzMDRkYWI3NzA4NDE3ZDM1NyIsImlhdCI6MTc0OTAwODQwMCwiZXhwIjoxNzUxNjAwNDAwfQ.Ox1GAlSDEXAPau98gmpizt_gXuMDAijA8K-mdigdLCQ"); // Store username in localStorage
     } else {
       setError(res.message || "Invalid username or password");
     }

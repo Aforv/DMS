@@ -13,9 +13,14 @@ const initialFormState = {
   paidAmount: "",
   taxAmount: "",
   discountAmount: "",
-  paymentStatus: "Pending",
+  paymentStatus: "Unpaid",
   paymentType: "Invoice",
   caseId: "",
+  dcNumber: "", 
+  invoiceSubmittedDate: "",
+  bdCharges: "",
+  bdPaidDate: "",
+  bdPaidBy: "",
 };
 
 const AddInvoiceForm = ({
@@ -29,26 +34,59 @@ const AddInvoiceForm = ({
   const [cases, setCases] = useState([]);
   const { token } = useAuth();
 
-  useEffect(() => {
-    const fetchCases = async () => {
-      try {
-        const response = await axios.get(
-          "http://43.250.40.133:5005/api/v1/cases",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setCases(response.data?.data || []);
-      } catch (error) {
-        toast.error("Failed to fetch cases.");
-        console.error("Failed to fetch cases:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchCases = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         "http://43.250.40.133:5005/api/v1/cases",
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         }
+  //       );
+  //       setCases(response.data?.data || []);
+  //     } catch (error) {
+  //       toast.error("Failed to fetch cases.");
+  //       console.error("Failed to fetch cases:", error);
+  //     }
+  //   };
 
-    if (showModal) fetchCases();
-  }, [showModal]);
+  //   if (showModal) fetchCases();
+  // }, [showModal]);
+
+
+  useEffect(() => {
+  const fetchCasesAndInvoices = async () => {
+    try {
+      const [casesRes, invoicesRes] = await Promise.all([
+        axios.get("http://43.250.40.133:5005/api/v1/cases", {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        axios.get("http://43.250.40.133:5005/api/v1/case-invoices", {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+      ]);
+
+      const allCases = casesRes.data?.data || [];
+      const allInvoices = invoicesRes.data?.data || [];
+
+      const invoicedCaseIds = new Set(allInvoices.map((inv) => inv.case?._id));
+
+      const filteredCases = allCases.filter(
+        (c) => !invoicedCaseIds.has(c._id)
+      );
+
+      setCases(filteredCases);
+    } catch (error) {
+      toast.error("Failed to fetch cases or invoices.");
+      console.error("Error:", error);
+    }
+  };
+
+  if (showModal) fetchCasesAndInvoices();
+}, [showModal]);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -71,6 +109,11 @@ const AddInvoiceForm = ({
       paymentStatus: formData.paymentStatus,
       paymentType: formData.paymentType,
       case: formData.caseId,
+  //     invoiceSubmittedDate: formData.invoiceStatus === "Paid" ? formData.invoiceSubmittedDate : null,
+  // bdCharges: formData.invoiceStatus === "Paid" ? formData.bdCharges : null,
+  // bdPaidDate: formData.invoiceStatus === "Paid" ? formData.bdPaidDate : null,
+  // bdPaidBy: formData.invoiceStatus === "Paid" ? formData.bdPaidBy : null,
+  //  dcNumber: formData.dcNumber,
     };
 
     try {
@@ -124,6 +167,42 @@ const AddInvoiceForm = ({
           </h2>
 
           <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Payment Type
+              </label>
+              <select
+                name="paymentType"
+                value={formData.paymentType}
+                onChange={handleChange}
+                className="w-full border border-gray-300 px-3 py-2 rounded-md"
+              >
+                <option value="Invoice">Invoice</option>
+                <option value="Cash">Cash</option>
+                <option value="Card">Card</option>
+                <option value="UPI">UPI</option>
+                <option value="Online">Online</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Case</label>
+              <select
+                name="caseId"
+                value={formData.caseId}
+                onChange={handleChange}
+                required
+                className="w-full border border-gray-300 px-3 py-2 rounded-md"
+              >
+                <option value="">Select a case</option>
+                {cases.map((c) => (
+                  <option key={c._id} value={c._id}>
+                    {c.caseNumber || `Case ${c._id}`}
+                  </option>
+                ))}
+              </select>
+            </div>
             <div>
               <label className="block text-sm font-medium mb-1">
                 Invoice Number
@@ -207,42 +286,84 @@ const AddInvoiceForm = ({
                 className="w-full border border-gray-300 px-3 py-2 rounded-md"
               />
             </div>
-
             <div>
-              <label className="block text-sm font-medium mb-1">
-                Payment Type
-              </label>
-              <select
-                name="paymentType"
-                value={formData.paymentType}
-                onChange={handleChange}
-                className="w-full border border-gray-300 px-3 py-2 rounded-md"
-              >
-                <option value="Invoice">Invoice</option>
-                <option value="Cash">Cash</option>
-                <option value="Card">Card</option>
-                <option value="UPI">UPI</option>
-                <option value="Online">Online</option>
-              </select>
-            </div>
+  <label className="block text-sm font-medium mb-1">
+    DC Number
+  </label>
+  <input
+    type="text"
+    name="dcNumber"
+    value={formData.dcNumber}
+    onChange={handleChange}
+    className="w-full border border-gray-300 px-3 py-2 rounded-md"
+  />
+</div>
 
-            <div>
-              <label className="block text-sm font-medium mb-1">Case</label>
-              <select
-                name="caseId"
-                value={formData.caseId}
-                onChange={handleChange}
-                required
-                className="w-full border border-gray-300 px-3 py-2 rounded-md"
-              >
-                <option value="">Select a case</option>
-                {cases.map((c) => (
-                  <option key={c._id} value={c._id}>
-                    {c.caseNumber || `Case ${c._id}`}
-                  </option>
-                ))}
-              </select>
-            </div>
+<div>
+  <label className="block text-sm font-medium mb-1">
+    Invoice Status
+  </label>
+  <select
+    name="paymentStatus"
+    value={formData.paymentStatus}
+    onChange={handleChange}
+    className="w-full border border-gray-300 px-3 py-2 rounded-md"
+  >
+    <option value="Unpaid">Unpaid</option>
+    <option value="Paid">Paid</option>
+    <option value="Partially Paid">Partial</option>
+  </select>
+</div>
+{formData.paymentStatus === "Paid" && (
+  <>
+    <div>
+      <label className="block text-sm font-medium mb-1">
+        Invoice Submitted Date
+      </label>
+      <input
+        type="date"
+        name="invoiceSubmittedDate"
+        value={formData.invoiceSubmittedDate}
+        onChange={handleChange}
+        className="w-full border border-gray-300 px-3 py-2 rounded-md"
+      />
+    </div>
+
+    <div>
+      <label className="block text-sm font-medium mb-1">BD Charges</label>
+      <input
+        type="number"
+        name="bdCharges"
+        value={formData.bdCharges}
+        onChange={handleChange}
+        className="w-full border border-gray-300 px-3 py-2 rounded-md"
+        min={0}
+      />
+    </div>
+
+    <div>
+      <label className="block text-sm font-medium mb-1">BD Paid Date</label>
+      <input
+        type="date"
+        name="bdPaidDate"
+        value={formData.bdPaidDate}
+        onChange={handleChange}
+        className="w-full border border-gray-300 px-3 py-2 rounded-md"
+      />
+    </div>
+
+    <div>
+      <label className="block text-sm font-medium mb-1">BD Paid By</label>
+      <input
+        type="text"
+        name="bdPaidBy"
+        value={formData.bdPaidBy}
+        onChange={handleChange}
+        className="w-full border border-gray-300 px-3 py-2 rounded-md"
+      />
+    </div>
+  </>
+)}
 
             <div className="col-span-2 flex justify-end gap-2 mt-6">
               <button

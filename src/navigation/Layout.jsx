@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ImStatsBars2 } from "react-icons/im";
 import { FaShoppingCart } from "react-icons/fa";
+import { MdApartment } from "react-icons/md";
 import {
   HiHome,
   HiUser,
@@ -10,6 +11,7 @@ import {
   HiChartBar,
   HiDocumentReport,
   HiChevronDown,
+  HiOutlineLibrary,
   HiMoon,
   HiSun,
   HiOfficeBuilding,
@@ -21,6 +23,7 @@ import {
 
 import { RiFoldersLine } from "react-icons/ri";
 import { useAuth } from "../components/Authentication/AuthContext";
+import { HomeIcon } from "@heroicons/react/16/solid";
 
 
 function UserProfileMenu() {
@@ -284,6 +287,13 @@ export default function Layout({ children }) {
     { name: "Doctor", icon: HiUser, path: "/doctor" },
     { name: "Invoices", icon: HiReceiptTax, path: "/invoices/list" },
     { name: "Roles", icon: HiKey, path: "/roles/list" },
+    { name: "InhouseInventory", icon: HomeIcon, path: "/inhouseinventory" },
+    { name: "Doctors", icon: HiUser, path: "/doctor" },
+    { name: "Principle", icon: HiUsers, path: "/principle" },
+    { name: "Department", icon: MdApartment, path: "/department" },
+    { name: "Invoices", icon: HiOfficeBuilding, path: "/invoices/list" },
+    {name:"Adjustments",icon:HiOutlineLibrary,path:"/inventoryadjustment"},
+    { name: "Physical Counts", icon: HiUser, path: "/physicalcount/list" },
   ];
 
   const activeMenuName = findActiveMenuName(menuItems, location.pathname) || "Dashboard";

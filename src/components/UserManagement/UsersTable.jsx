@@ -7,6 +7,8 @@ import { HiDotsVertical, HiSearch, HiPencil, HiTrash } from "react-icons/hi";
 import { useAuth } from "../Authentication/AuthContext";
 import AddUserForm from "./AddUserForm";
 import axiosInstance from "../../utils/axiosInstancenew";
+import EditUserForm from "./EditUser";
+import DeleteUser from "./DeleteUser";
 
 
 
@@ -214,9 +216,9 @@ const UsersTable = () => {
         noDataComponent={error ? "Error loading users." : "No users found."}
       />
 
-     <AddUserForm showModal={showAddModal} setShowModal={setShowAddModal} onSuccess={fetchUsers} />
-       {/* <EditUserForm show={editModalOpen} onClose={() => setEditModalOpen(false)} user={selectedUser} onUpdate={fetchUsers} />
-      <DeleteUser isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} onConfirm={confirmDelete} userName={userToDelete?.name} /> */}
+      <AddUserForm showModal={showAddModal} setShowModal={setShowAddModal} onSuccess={fetchUsers} />
+      <EditUserForm show={editModalOpen} onClose={() => setEditModalOpen(false)} user={selectedUser} onUpdate={fetchUsers} />
+      <DeleteUser isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} onConfirm={confirmDelete} userName={userToDelete?.name} />
     </div>
   );
 };

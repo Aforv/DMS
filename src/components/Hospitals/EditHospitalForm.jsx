@@ -1,14 +1,14 @@
-import axios from "axios";
+
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import { useAuth } from "../Authentication/AuthContext";
+import axiosInstance from "../../utils/axiosInstancenew";
 
 const EditHospitalForm = ({ show, onClose, hospital, onUpdate }) => {
   const [formData, setFormData] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzE4M2UzMDRkYWI3NzA4NDE3ZDM1NyIsImlhdCI6MTc0ODg2OTU3MywiZXhwIjoxNzUxNDYxNTczfQ.GQ8JI7OeUW6dZA63JQLlErGWyTsNLuv1F2WiGRhQTXY";
-
+  const { token } = useAuth();
+  
   const fields = [
     { name: "name", type: "text" },
     { name: "email", type: "email" },
@@ -35,7 +35,7 @@ const EditHospitalForm = ({ show, onClose, hospital, onUpdate }) => {
     setIsSubmitting(true);
 
     try {
-      const response = await axios.put(
+      const response = await axiosInstance.put(
         `http://43.250.40.133:5005/api/v1/hospitals/${hospital._id}`,
         formData,
         {
@@ -45,8 +45,6 @@ const EditHospitalForm = ({ show, onClose, hospital, onUpdate }) => {
           },
         }
       );
-
-      const updatedHospital = response.data.data;
       onUpdate();
       toast.success("Hospital updated successfully!");
 
