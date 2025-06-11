@@ -63,7 +63,7 @@ const DataTablewithMenu = ({ data = [], onEdit, onDelete }) => {
     },
     {
     name: "Bin Location",
-    selector: (row) => row.binLocation || "N/A", // ✅ Added
+    selector: (row) => row.binLocation || "N/A", 
     sortable: true,
   },
 

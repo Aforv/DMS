@@ -185,32 +185,34 @@ function Inventory() {
     setErrors({});
   };
 
-  const handleExport = () => {
-      if (!dataList || dataList.length === 0) {
-        toast.warning("No data to export");
-        return;
-      }
-  
-      const exportData = dataList.map((item) => ({
-        Product: item.product?.name || "",
-        BatchNumber: item.batchNumber,
-        Quantity: item.quantity,
-        Location: item.location,
-        DPValue: item.dpValue,
-        ExpiryDate: item.expiryDate?.slice(0, 10),
-        Notes: item.notes,
-      }));
-  
-      const csv = Papa.unparse(exportData);
-      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.setAttribute("href", url);
-      link.setAttribute("download", "inhouse_inventory.csv");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    };
+ const handleExport = () => {
+  if (!dataList || dataList.length === 0) {
+    toast.warning("No data to export");
+    return;
+  }
+
+  const exportData = dataList.map((item) => ({
+    Product: item.product?.name || "",
+    BatchNumber: item.batchNumber,
+    Quantity: item.quantity,
+    Location: item.location,
+    DPValue: item.dpValue,
+    ExpiryDate: item.expiryDate?.slice(0, 10),
+    Notes: item.notes,
+  }));
+
+  const csv = Papa.unparse(exportData)
+
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", "inhouse_inventory.csv");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
   
   
     const handleImport = (e) => {
@@ -306,7 +308,7 @@ function Inventory() {
       )}
     </div>
 
-    {/* Add Inventory Button */}
+    
     <Button onClick={() => setOpenModal(true)}>Add Inventory</Button>
   </div>
 </div>

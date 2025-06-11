@@ -15,6 +15,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CaseTable from './CaseTable';
 import DeleteCase from './DeleteCase';
+import { useAuth } from '../Authentication/AuthContext';
 
 function AddCaseData() {
   const [openModal, setOpenModal] = useState(false);
@@ -48,11 +49,11 @@ function AddCaseData() {
   const [subcategories, setSubcategories] = useState([]);
   const [principles, setPrinciples] = useState([]);
   const [products, setProducts] = useState([]);
-
-
+  
+const{token} = useAuth()
   const axiosConfig = () => ({
     headers: {
-      Authorization: `Bearer ${"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzE4M2UzMDRkYWI3NzA4NDE3ZDM1NyIsImlhdCI6MTc0OTEyOTA2NCwiZXhwIjoxNzUxNzIxMDY0fQ.CUIQgfi6wN15fTDCN0bT8ycSD6v6S_72Ive9Zu8sgZY"}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 

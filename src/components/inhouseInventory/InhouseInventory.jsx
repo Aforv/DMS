@@ -15,6 +15,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Papa from "papaparse";
 import EditinhouseinventoryDrawer from "./EditInhouseInventory";
+import { useAuth } from "../Authentication/AuthContext";
 
 function InhouseInventory() {
   const [openModal, setOpenModal] = useState(false);
@@ -39,10 +40,10 @@ function InhouseInventory() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isEdit, setIsEdit] = useState(false);
 
-
+const{token} = useAuth()
   const axiosConfig = () => ({
     headers: {
-      Authorization: `Bearer ${"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzE4M2UzMDRkYWI3NzA4NDE3ZDM1NyIsImlhdCI6MTc0ODg1MzE0OSwiZXhwIjoxNzUxNDQ1MTQ5fQ.hEqPUqmbs1poYpDaQFz4bkcRUPEB34rZhKWD_riq_ms"}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 

@@ -2,13 +2,16 @@ import { Modal, Button } from "flowbite-react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useAuth } from "../Authentication/AuthContext";
 
 export default function DeleteCase({ show, onClose, caseId, caseName, onSuccess }) {
+  const{token} = useAuth()
   const handleDelete = async () => {
+    
     try {
       await axios.delete(`http://43.250.40.133:5005/api/v1/cases/${caseId}`,  {
       headers: {
-          Authorization: `Bearer ${"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzE4M2UzMDRkYWI3NzA4NDE3ZDM1NyIsImlhdCI6MTc0OTEyOTA2NCwiZXhwIjoxNzUxNzIxMDY0fQ.CUIQgfi6wN15fTDCN0bT8ycSD6v6S_72Ive9Zu8sgZY"}`,
+          Authorization: `Bearer ${token}`,
         }
       });
       toast.success(`${caseName} deleted successfully`);

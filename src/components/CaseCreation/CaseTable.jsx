@@ -308,7 +308,13 @@ const handleStatusUpdate = (id) => {
         <h1 className="text-xl font-bold whitespace-nowrap">CASES LIST</h1>
 
         <div className="flex gap-2">
-          <Button onClick={() => handleExport()}>Export to Excel</Button>
+          {/* <Button onClick={() => handleExport()}>Export to Excel</Button> */}
+          <Dropdown label="Actions">
+            <Dropdown.Item as="label" htmlFor="import-file" >
+              Import
+            </Dropdown.Item>
+            <Dropdown.Item onClick={handleExport}>Export</Dropdown.Item>
+          </Dropdown>
           <Button color="blue" onClick={onAdd}>
             Add Cases
           </Button>
