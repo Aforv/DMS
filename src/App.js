@@ -28,6 +28,7 @@ import InvoiceTable from "./components/Invoices/InvoiceTable";
 import AddInvoiceForm from "./components/Invoices/AddInvoiceForm";
 import InventoryAdjustments from "./components/Inventory Adjustments/InventoryAdjustment";
 import PhysicalCountsTable from "./components/PhysicalCount/PhysicalCountsTable";
+import AddCaseData from "./components/CaseCreation/AddCaseData";
 
 function App() {
   return (
@@ -77,6 +78,7 @@ function App() {
                     <Route path="/invoices/list" element={<InvoiceTable />} />
                     <Route path="/invoices/addinvoiceform" element={<AddInvoiceForm />} />
                     <Route path="/inventoryadjustment" element={<InventoryAdjustments/>}/>
+                    <Route path="/cases" element={<AddCaseData/>}/>
                     {/* Add more protected routes here */}
                   </Routes>
                 </div>
