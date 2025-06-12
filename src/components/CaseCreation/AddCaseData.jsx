@@ -53,7 +53,7 @@ function AddCaseData() {
 const{token} = useAuth()
   const axiosConfig = () => ({
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${token}`
     },
   });
 
