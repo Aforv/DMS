@@ -28,6 +28,7 @@ import InvoiceTable from "./components/Invoices/InvoiceTable";
 import AddInvoiceForm from "./components/Invoices/AddInvoiceForm";
 import InventoryAdjustments from "./components/Inventory Adjustments/InventoryAdjustment";
 import PhysicalCountsTable from "./components/PhysicalCount/PhysicalCountsTable";
+import AddNestedsubcategories from "./components/Categories/Addnestedsubcategories";
 
 function App() {
   return (
@@ -60,6 +61,7 @@ function App() {
                     <Route path="/categories" element={<CategoriesPage />} />
                     <Route path="/add-category" element={<AddCategoryPage />} />
                     <Route path="/subcategories" element={<AddSubCategoryPage />} />
+                    <Route path="/add-nestedsubcategories" element={<AddNestedsubcategories />} />
                     <Route path="/edit-category/:id" element={<EditCategory />} />
                     <Route path="/edit-subcategory/:id" element={<EditSubCategory />} />
                     <Route path="/products" element={<Products/>}/>
