@@ -29,6 +29,8 @@ import AddInvoiceForm from "./components/Invoices/AddInvoiceForm";
 import InventoryAdjustments from "./components/Inventory Adjustments/InventoryAdjustment";
 import PhysicalCountsTable from "./components/PhysicalCount/PhysicalCountsTable";
 
+import PortfolioTable from "./components/Portfolio/PortFolioTable";
+
 function App() {
   return (
     <>
@@ -72,6 +74,7 @@ function App() {
                     <Route path="/users/list" element={<UsersTable />} />
                     <Route path = "/inhouseinventory" element = {<InhouseInventory/>}/>
                     <Route path="/principle" element={<PrinciplesModule />} />
+                    <Route path ="/portfolio" element={<PortfolioTable/>}/>
                     <Route path="/principle/list" element={< DataTableWithMenuPrinciple/>} />
                     <Route path="/department" element={<DepartmentsManager />} />
                     <Route path="/invoices/list" element={<InvoiceTable />} />
