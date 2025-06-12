@@ -12,13 +12,20 @@ const initialFormState = {
   city: "",
   state: "",
   pincode: "",
+  agreement: "",
+  gst: "",
+  pan: "",
+  tan: "",
+  addressAsPerGst: "",
+  gstPercentage: "",
 };
 
 const AddHospitalForm = ({ showModal, setShowModal, fetchHospitals }) => {
   const [formData, setFormData] = useState(initialFormState);
   const [loading, setLoading] = useState(false);
 
- const { token } = useAuth();
+  const { token } = useAuth();
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value.trimStart() }));
@@ -72,86 +79,240 @@ const AddHospitalForm = ({ showModal, setShowModal, fetchHospitals }) => {
     }
   };
 
-  const fields = [
-    { name: "name", type: "text" },
-    { name: "email", type: "email" },
-    { name: "phone", type: "tel", pattern: "[0-9+\\-\\s]+" },
-    { name: "pincode", type: "text", pattern: "\\d{6}" },
-    { name: "address", type: "text", span: 2 },
-    { name: "city", type: "text" },
-    { name: "state", type: "text" },
-  ];
-
   return (
     <>
       {showModal && (
-  <div
-    className="fixed inset-0 z-50 flex justify-end align-center bg-black bg-opacity-40 items-center"
-    onClick={() => setShowModal(false)} // Close on backdrop click
-  >
-    {/* Backdrop */}
-    <div className="absolute inset-0 bg-black bg-opacity-40" />
+        <div
+          className="fixed inset-0 z-50 flex justify-end bg-black bg-opacity-40"
+          onClick={() => setShowModal(false)}
+        >
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black bg-opacity-40" />
 
-    {/* Drawer */}
-    <div
-  className={`relative bg-white w-full sm:max-w-md h-screen shadow-xl transform transition-transform duration-2000 ease-in-out ${
-    showModal ? "translate-x-0" : "translate-x-full"
-  }`} 
-     onClick={(e) => e.stopPropagation()}
-    >
-      {/* Close Button */}
-      <button
-        onClick={() => setShowModal(false)}
-        className="absolute top-2 right-3 text-gray-500 hover:text-gray-700 text-xl"
-      >
-        &times;
-      </button>
-
-      {/* Form */}
-      <form onSubmit={handleSubmit} className="h-full overflow-y-auto p-6">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-6 text-center">
-          Add New Hospital
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {fields.map(({ name, type, pattern, span }) => (
-            <div key={name} className={span === 2 ? "sm:col-span-2" : ""}>
-              <label
-                htmlFor={name}
-                className="block text-sm font-medium text-gray-700 capitalize"
-              >
-                {name}
-              </label>
-              <input
-                id={name}
-                name={name}
-                value={formData[name]}
-                onChange={handleChange}
-                required
-                type={type}
-                pattern={pattern}
-                className="mt-1 w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          ))}
-        </div>
-
-        <div className="pt-6 text-center">
-          <button
-            type="submit"
-            disabled={loading}
-            className={`px-6 py-2 rounded-md font-semibold text-white transition ${
-              loading
-                ? "bg-blue-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700 shadow"
+          {/* Drawer */}
+          <div
+            className={`relative bg-white w-full sm:max-w-4xl h-screen shadow-xl transform transition-transform duration-300 ease-in-out ${
+              showModal ? "translate-x-0" : "translate-x-full"
             }`}
+            onClick={(e) => e.stopPropagation()}
           >
-            {loading ? "Submitting..." : "Submit"}
-          </button>
+            {/* Close Button */}
+            <button
+              onClick={() => setShowModal(false)}
+              className="absolute top-2 right-3 text-gray-500 hover:text-gray-700 text-xl"
+            >
+              &times;
+            </button>
+
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="h-full overflow-y-auto p-6">
+              <h2 className="text-xl font-semibold text-gray-800 mb-6 text-center">
+                Add New Hospital
+              </h2>
+                
+                {/* Basic Information Section */}
+                <div>
+    
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                        Name
+                      </label>
+                      <input
+                        id="name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        required
+                        placeholder="Enter hospital name"
+                        type="text"
+                        className="w-full border border-gray-300 px-3 py-2 rounded-md"
+                      />
+                    </div>
+
+                     <div>
+                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                        Email
+                      </label>
+                      <input
+                        id="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                        placeholder="Enter email"
+                        type="email"
+                        className="w-full border border-gray-300 px-3 py-2 rounded-md"
+                      />
+                    </div>
+
+                   
+                    </div>
+
+                     <div className="grid grid-cols-2 gap-4">
+                   
+
+                    <div>
+                      <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                        Phone
+                      </label>
+                      <input
+                        id="phone"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        required
+                        placeholder="Enter phone number"
+                        type="tel"
+                        pattern="[0-9+\-\s]+"
+                        className="w-full border border-gray-300 px-3 py-2 rounded-md"
+                      />
+                    </div>
+
+                      <div>
+                      <label htmlFor="gst" className="block text-sm font-medium text-gray-700 mb-1">
+                        GST Number
+                      </label>
+                      <input
+                        id="gst"
+                        name="gst"
+                        value={formData.gst}
+                        onChange={handleChange}
+                        placeholder="Enter GST number"
+                        type="text"
+                        className="w-full border border-gray-300 px-3 py-2 rounded-md"
+                      />
+                    </div>
+                    </div>
+                 
+
+                    <div className="grid grid-cols-2 gap-4">
+
+                                <div>
+                      <label htmlFor="pan" className="block text-sm font-medium text-gray-700 mb-1">
+                        PAN Number
+                      </label>
+                      <input
+                        id="pan"
+                        name="pan"
+                        value={formData.pan}
+                        onChange={handleChange}
+                        placeholder="Enter PAN"
+                        type="text"
+                        className="w-full border border-gray-300 px-3 py-2 rounded-md"
+                      />
+                    </div>
+
+                      <div>
+                      <label htmlFor="agreement" className="block text-sm font-medium text-gray-700 mb-1">
+                        Agreement
+                      </label>
+                      <input
+                        id="agreement"
+                        name="agreement"
+                        value={formData.agreement}
+                        onChange={handleChange}
+                        type="file"
+                        className="w-full border border-gray-300 px-3 py-1.5 rounded-md"
+                      />
+                    </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                      <label htmlFor="addressAsPerGst" className="block text-sm font-medium text-gray-700 mb-1">
+                        Address as per GST
+                      </label>
+                      <input
+                        id="addressAsPerGst"
+                        name="addressAsPerGst"
+                        value={formData.addressAsPerGst}
+                        onChange={handleChange}
+                        placeholder="Enter GST registered address"
+                        type="text"
+                        className="w-full border border-gray-300 px-3 py-2 rounded-md"
+                      />
+                    </div>
+
+                         <div>
+                        <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
+                          City
+                        </label>
+                        <input
+                          id="city"
+                          name="city"
+                          value={formData.city}
+                          onChange={handleChange}
+                          required
+                          placeholder="City"
+                          type="text"
+                          className="w-full border border-gray-300 px-3 py-2 rounded-md"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                                              <div>
+                        <label htmlFor="state" className="block text-sm font-medium text-gray-700 mb-1">
+                          State
+                        </label>
+                        <input
+                          id="state"
+                          name="state"
+                          value={formData.state}
+                          onChange={handleChange}
+                          required
+                          placeholder="State"
+                          type="text"
+                          className="w-full border border-gray-300 px-3 py-2 rounded-md"
+                        />
+                      </div>
+
+                    <div>
+                      <label htmlFor="pincode" className="block text-sm font-medium text-gray-700 mb-1">
+                        Pincode
+                      </label>
+                      <input
+                        id="pincode"
+                        name="pincode"
+                        value={formData.pincode}
+                        onChange={handleChange}
+                        required
+                        placeholder="Enter 6-digit pincode"
+                        type="text"
+                        pattern="\d{6}"
+                        className="w-full border border-gray-300 px-3 py-2 rounded-md"
+                      />
+                    </div>
+                    </div>
+                  </div>
+                </div>
+                 <div>
+                </div>
+
+              {/* Submit Button */}
+              <div className="flex justify-end gap-4 mt-8">
+                <button
+                  type="button"
+                  onClick={() => setShowModal(false)}
+                  className="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400 transition"
+                  disabled={loading}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+                  disabled={loading}
+                >
+                  {loading ? "Submitting..." : "Submit"}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-      </form>
-    </div>
-  </div>
-)}
+      )}
     </>
   );
 };
