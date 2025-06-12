@@ -5,6 +5,7 @@ import {
   DrawerHeader,
   Drawer,
   Textarea,
+  Select,
 } from "flowbite-react";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -13,6 +14,7 @@ import { HiSearch } from "react-icons/hi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Papa from "papaparse";
+import { useAuth } from "../Authentication/AuthContext";
 
 
 function Inventory() {
@@ -27,6 +29,11 @@ function Inventory() {
     dpValue: "",
     expiryDate: "",
     notes: "",
+    binlocation :  "",
+    avaliableQuantity : "",
+    reservedQuantity : "",
+    receivedDate : "",
+    status : ""
   });
 
   const [errors, setErrors] = useState({});
@@ -35,10 +42,11 @@ function Inventory() {
   const [editIndex, setEditIndex] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
   const [productList, setProductList] = useState([]); 
+  const {token} = useAuth()
 
   const axiosConfig = () => ({
     headers: {
-      Authorization: `Bearer ${"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzE4M2UzMDRkYWI3NzA4NDE3ZDM1NyIsImlhdCI6MTc0ODg1MzE0OSwiZXhwIjoxNzUxNDQ1MTQ5fQ.hEqPUqmbs1poYpDaQFz4bkcRUPEB34rZhKWD_riq_ms"}`,
+      Authorization: `Bearer ${token}`
     },
   });
 
@@ -71,32 +79,61 @@ function Inventory() {
     fetchProducts(); 
   }, []);
 
-  const validate = () => {
-    let tempErrors = {};
-    if (!formData.product || formData.product === "")
-      tempErrors.product = "Product is required";
-    if (!formData.batchNumber || formData.batchNumber.trim() === "")
-      tempErrors.batchNumber = "Batch Number is required";
-    if (!formData.quantity)
-      tempErrors.quantity = "Quantity is required";
-    else if (isNaN(formData.quantity) || Number(formData.quantity) <= -10)
-      tempErrors.quantity = "Quantity must be a positive number";
-    if (!formData.location || formData.location.trim() === "")
-      tempErrors.location = "Location is required";
-    if (!formData.dpValue)
-      tempErrors.dpValue = "DpValue is required";
-    else if (isNaN(formData.dpValue) || Number(formData.dpValue) <= 0)
-      tempErrors.dpValue = "DpValue must be a positive number";
-    if (!formData.expiryDate)
-      tempErrors.expiryDate = "Expiry Date is required";
-    else {
-      const today = new Date();
-      const expiry = new Date(formData.expiryDate);
-      if (expiry < today) tempErrors.expiryDate = "Expiry Date must be today or in the future";
+ const validate = () => {
+  let tempErrors = {};
+
+  if (!formData.product || formData.product.trim() === "") {
+    tempErrors.product = "Product is required";
+  }
+  if (!formData.batchNumber || formData.batchNumber.trim() === "") {
+    tempErrors.batchNumber = "Batch Number is required";
+  }
+  if (formData.quantity === "") {
+    tempErrors.quantity = "Quantity is required";
+  } else if (isNaN(formData.quantity) || Number(formData.quantity) <= 0) {
+    tempErrors.quantity = "Quantity must be a positive number";
+  }
+  if (formData.avaliableQuantity === "") {
+    tempErrors.avaliableQuantity = "Available Quantity is required";
+  } else if (isNaN(formData.avaliableQuantity) || Number(formData.avaliableQuantity) < 0) {
+    tempErrors.avaliableQuantity = "Available Quantity must be 0 or more";
+  }
+  if (formData.reservedQuantity === "") {
+    tempErrors.reservedQuantity = "Reserved Quantity is required";
+  } else if (isNaN(formData.reservedQuantity) || Number(formData.reservedQuantity) < 0) {
+    tempErrors.reservedQuantity = "Reserved Quantity must be 0 or more";
+  }
+  if (!formData.location || formData.location.trim() === "") {
+    tempErrors.location = "Location is required";
+  }
+  if (!formData.binlocation || formData.binlocation.trim() === "") {
+    tempErrors.binlocation = "Bin Location is required";
+  }
+  if (formData.dpValue === "") {
+    tempErrors.dpValue = "DP Value is required";
+  } else if (isNaN(formData.dpValue) || Number(formData.dpValue) <= 0) {
+    tempErrors.dpValue = "DP Value must be a positive number";
+  }
+  if (!formData.expiryDate) {
+    tempErrors.expiryDate = "Expiry Date is required";
+  } else {
+    const expiry = new Date(formData.expiryDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); 
+    if (expiry < today) {
+      tempErrors.expiryDate = "Expiry Date must be today or in the future";
     }
-    setErrors(tempErrors);
-    return Object.keys(tempErrors).length === 0;
-  };
+  }
+  if (!formData.receivedDate) {
+    tempErrors.receivedDate = "Received Date is required";
+  }
+  if (!formData.status || formData.status.trim() === "") {
+    tempErrors.status = "Status is required";
+  }
+
+  setErrors(tempErrors);
+  return Object.keys(tempErrors).length === 0;
+};
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -146,6 +183,12 @@ function Inventory() {
       dpValue: "",
       expiryDate: "",
       notes: "",
+      binlocation :  "",
+    avaliableQuantity : "",
+    reservedQuantity : "",
+    receivedDate : "",
+    status : ""
+
     });
     setErrors({});
     setIsEdit(false);
@@ -162,6 +205,11 @@ function Inventory() {
       item.dpValue?.toString() || "",
       item.expiryDate || "",
       item.notes || "",
+      item.binlocation ||  "",
+      item.avaliableQuantity || "",
+      item.reservedQuantity || "",
+      item.receivedDate || "",
+      item.status || ""
     ]
       .join(" ")
       .toLowerCase();
@@ -306,7 +354,6 @@ function Inventory() {
       )}
     </div>
 
-    {/* Add Inventory Button */}
     <Button onClick={() => setOpenModal(true)}>Add Inventory</Button>
   </div>
 </div>
@@ -364,6 +411,36 @@ function Inventory() {
               </div>
 
               <div>
+                <Label htmlFor="location">Location</Label>
+                <TextInput
+                  id="location"
+                  name="location"
+                  type="text"
+                  sizing="sm"
+                  value={formData.location}
+                  onChange={handleChange}
+                  color={errors.location ? "failure" : "gray"}
+                />
+                {errors.location && (
+                  <p className="text-red-600 text-sm mt-1">{errors.location}</p>
+                )}
+              </div>
+               <div>
+                <Label htmlFor="binloacation">Bin Location</Label>
+                <TextInput
+                  id="binlocation"
+                  name="binlocation"
+                  type="text"
+                  sizing="sm"
+                  value={formData.binlocation}
+                  onChange={handleChange}
+                  color={errors.binlocation ? "failure" : "gray"}
+                />
+                {errors.binlocation && (
+                  <p className="text-red-600 text-sm mt-1">{errors.binlocation}</p>
+                )}
+              </div>
+              <div>
                 <Label htmlFor="quantity">Quantity</Label>
                 <TextInput
                   id="quantity"
@@ -381,18 +458,36 @@ function Inventory() {
               </div>
 
               <div>
-                <Label htmlFor="location">Location</Label>
+                <Label htmlFor="avaliableQuantity">AvaliableQuantity</Label>
                 <TextInput
-                  id="location"
-                  name="location"
-                  type="text"
+                  id="avaliableQuantity"
+                  name="avaliableQuantity"
+                  type="number"
                   sizing="sm"
-                  value={formData.location}
+                  value={formData.avaliableQuantity}
                   onChange={handleChange}
-                  color={errors.location ? "failure" : "gray"}
+                  color={errors.avaliableQuantity ? "failure" : "gray"}
+                  min={1}
                 />
-                {errors.location && (
-                  <p className="text-red-600 text-sm mt-1">{errors.location}</p>
+                {errors.avaliableQuantity && (
+                  <p className="text-red-600 text-sm mt-1">{errors.avaliableQuantity}</p>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="reservedQuantity">ReservedQuantity</Label>
+                <TextInput
+                  id="reservedQuantity"
+                  name="reservedQuantity"
+                  type="number"
+                  sizing="sm"
+                  value={formData.reservedQuantity}
+                  onChange={handleChange}
+                  color={errors.reservedQuantity ? "failure" : "gray"}
+                  min={1}
+                />
+                {errors.reservedQuantity && (
+                  <p className="text-red-600 text-sm mt-1">{errors.reservedQuantity}</p>
                 )}
               </div>
 
@@ -415,6 +510,22 @@ function Inventory() {
               </div>
 
               <div>
+                <Label htmlFor="receivedDate">Received Date</Label>
+                <TextInput
+                  id="receivedDate"
+                  name="receivedDate"
+                  type="date"
+                  sizing="sm"
+                  value={formData.receivedDate}
+                  onChange={handleChange}
+                  color={errors.receivedDate ? "failure" : "gray"}
+                />
+                {errors.receivedDate && (
+                  <p className="text-red-600 text-sm mt-1">{errors.receivedDate}</p>
+                )}
+              </div>
+
+              <div>
                 <Label htmlFor="expiryDate">Expiry Date</Label>
                 <TextInput
                   id="expiryDate"
@@ -429,6 +540,23 @@ function Inventory() {
                   <p className="text-red-600 text-sm mt-1">{errors.expiryDate}</p>
                 )}
               </div>
+
+              <div>
+                <Label>Status</Label>
+                <Select
+                  value={formData.status}
+                  onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                >
+                  <option value="">Select Status</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Completed">Completed</option>
+                  <option value="Cancelled">Cancelled</option>
+                </Select>
+                {errors.status && (
+                  <p className="text-red-600 text-sm mt-1">{errors.status}</p>
+                )}
+              </div>
+
 
               <div className="md:col-span-2">
                 <Label htmlFor="notes">Notes</Label>
