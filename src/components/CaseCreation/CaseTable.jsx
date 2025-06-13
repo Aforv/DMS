@@ -1,26 +1,34 @@
 import React, { useState } from "react";
 import DataTable from "react-data-table-component";
-import { Button, Dropdown, TextInput,Label } from "flowbite-react";
-import { HiTrash, HiPencil, HiDotsVertical,HiSearch, HiDownload, HiCheckCircle } from "react-icons/hi";
+import { Button, Dropdown, Modal } from "flowbite-react";
+import {
+  HiTrash,
+  HiPencil,
+  HiDotsVertical,
+  HiDownload,
+  HiCheckCircle,
+} from "react-icons/hi";
 import DeleteCase from "./DeleteCase";
-// import {onAdd} from "./AddCaseData"
-import Papa from "papaparse"
+import Papa from "papaparse";
 import { toast } from "react-toastify";
 
-function CaseTable({ data = [], onEdit, onDelete,onAdd , onStatusUpdate,
-  onInvoiceDownload,}) {
-    const [filterText, setFilterText] = useState("");
-    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-const [selectedCase, setSelectedCase] = useState(null);
-const [fromDate, setFromDate] = useState("");
-const [toDate, setToDate] = useState("");
-const [openModal, setOpenModal] = useState(false);
-      const [searchTerm, setSearchTerm] = useState("");
+function CaseTable({
+  data = [],
+  onEdit,
+  onAdd,
+  onDelete,
+  onStatusUpdate,
+  onInvoiceDownload,
+}) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedCase, setSelectedCase] = useState(null);
+  const [statusModalOpen, setStatusModalOpen] = useState(false);
+  const [caseToUpdate, setCaseToUpdate] = useState(null);
 
-      
-      const filteredItems = data.filter((item) => {
+  const filteredItems = data.filter((item) => {
     const combined = [
-         item.caseNumber || "",
+      item.caseNumber || "",
       item.patientName || "",
       item.surgeryDate || "",
       item.hospitalName || item.hospital?.name || "",
@@ -34,36 +42,59 @@ const [openModal, setOpenModal] = useState(false);
     ]
       .join(" ")
       .toLowerCase();
-
     return combined.includes(searchTerm.toLowerCase());
   });
-    
-    
-    
-      const handleEdit = (item) => {
-        if (onEdit) {
-          onEdit(item);
-        }
-      };
-    
-      const handleDeleteClick = (caseData) => {
-  setSelectedCase(caseData);
-  setDeleteModalOpen(true);
-};
 
-const handleStatusUpdate = (id) => {
-    if (window.confirm("Mark this case as Completed?")) {
-      onStatusUpdate?.(id, "Completed");
-    }
+  const handleEdit = (item) => {
+    if (onEdit) onEdit(item);
+  };
+
+  const handleDeleteClick = (caseData) => {
+    setSelectedCase(caseData);
+    setDeleteModalOpen(true);
+  };
+
+  const handleStatusUpdate = (caseItem) => {
+    setCaseToUpdate(caseItem);
+    setStatusModalOpen(true);
   };
 
   const handleInvoiceDownload = (id) => {
     onInvoiceDownload?.(id);
   };
-      
-   
-    const columns = [
-         {
+
+  const handleExport = () => {
+    if (!data || data.length === 0) {
+      toast.warning("No data to export");
+      return;
+    }
+
+    const exportData = data.map((item) => ({
+      caseName: item?.name || "",
+      surgeryDate: item.surgeryDate || "",
+      hospital: item.hospitalName || item.hospital?.name || "",
+      doctor: item.doctorName || item.doctor?.name || "",
+      principle: item.principalName || item.principle?.name || "",
+      category: item.category || item.category?.name || "",
+      subcategory: item.subcategory || item.subcategory?.name || "",
+      dpValue: item.dpValue?.toString() || "",
+      sellingPrice: item.sellingPrice?.toString() || "",
+      notes: item.status || "",
+    }));
+
+    const csv = Papa.unparse(exportData);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "inhouse_cases.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const columns = [
+    {
       name: "Case No.",
       selector: (row) => row.caseNumber || "N/A",
       sortable: true,
@@ -73,31 +104,31 @@ const handleStatusUpdate = (id) => {
       selector: (row) => row.patientName || "N/A",
       sortable: true,
     },
-  {
-    name: "Surgery Date",
-    selector: (row) =>
-      row.surgeryDate
-        ? new Date(row.surgeryDate).toLocaleDateString()
-        : "N/A",
-    sortable: true,
-  },
-  {
-    name: "Hospital",
-    selector: (row) =>
-      typeof row.hospital === "object"
-        ? row.hospital?.name || "N/A"
-        : row.hospital || "N/A",
-    sortable: true,
-  },
-  {
-    name: "Doctor",
-    selector: (row) =>
-      typeof row.doctor === "object"
-        ? row.doctor?.name || "N/A"
-        : row.doctor || "N/A",
-    sortable: true,
-  },
- {
+    {
+      name: "Surgery Date",
+      selector: (row) =>
+        row.surgeryDate
+          ? new Date(row.surgeryDate).toLocaleDateString()
+          : "N/A",
+      sortable: true,
+    },
+    {
+      name: "Hospital",
+      selector: (row) =>
+        typeof row.hospital === "object"
+          ? row.hospital?.name || "N/A"
+          : row.hospital || "N/A",
+      sortable: true,
+    },
+    {
+      name: "Doctor",
+      selector: (row) =>
+        typeof row.doctor === "object"
+          ? row.doctor?.name || "N/A"
+          : row.doctor || "N/A",
+      sortable: true,
+    },
+    {
       name: "Principal",
       selector: (row) =>
         row.principalName && typeof row.principalName === "object"
@@ -153,174 +184,84 @@ const handleStatusUpdate = (id) => {
       ),
       sortable: true,
     },
-  {
-    name: "Action",
-    cell: (row) => (
-      <Dropdown
-        inline
-        label={<HiDotsVertical className="w-5 h-5 text-gray-600 cursor-pointer" />}
-        placement="left-start"
-        arrowIcon={false}
-      >
-        <Dropdown.Item
-          onClick={() => handleEdit(row)}
-          className="flex items-center gap-2 text-sm text-gray-700 hover:bg-gray-100"
+    {
+      name: "Action",
+      cell: (row) => (
+        <Dropdown
+          inline
+          label={<HiDotsVertical className="w-5 h-5 text-gray-600 cursor-pointer" />}
+          placement="left-start"
+          arrowIcon={false}
         >
-          <HiPencil className="w-4 h-4" />
-          <span>Edit</span>
-        </Dropdown.Item>
-         <Dropdown.Item
-                    onClick={() => handleStatusUpdate(row._id)}
-                    className="flex items-center gap-2 text-sm text-gray-700 hover:bg-gray-100 "
-                  >
-                    <HiCheckCircle className="w-4 h-4" />
-                    Mark Completed
-                  </Dropdown.Item>
-        
-                  <Dropdown.Item
-                    onClick={() => handleInvoiceDownload(row._id)}
-                    className="flex items-center gap-2 text-sm text-gray-700 hover:bg-gray-100 "
-                  >
-                    <HiDownload className="w-4 h-4" />
-                     Download Invoice
-                  </Dropdown.Item>
-        <Dropdown.Item
-          onClick={() => handleDeleteClick(row)}
-          className="flex items-center gap-2 text-sm text-red-600 hover:bg-red-50"
-        >
-          <HiTrash className="w-4 h-4" />
-          <span>Delete</span>
-        </Dropdown.Item>
-      </Dropdown>
-    ),
-    button: true,
-    width: "160px",
-  },
-];
-      const customStyles = {
-        headRow: {
-          style: {
-            backgroundColor: "lightblue",
-            borderBottomWidth: "1px",
-            borderBottomColor: "#e5e7eb",
-            fontWeight: 600,
-          },
-        },
-        headCells: {
-          style: {
-            fontSize: "14px",
-            color: "#111827",
-            paddingLeft: "16px",
-            paddingRight: "16px",
-          },
-        },
-        rows: {
-          style: {
-            fontSize: "14px",
-            color: "#374151",
-            backgroundColor: "white",
-          },
-        },
-        pagination: {
-          style: {
-            borderTop: "1px solid #e5e7eb",
-            padding: "16px",
-          },
-        },
-      };
+          <Dropdown.Item
+            onClick={() => handleEdit(row)}
+            className="flex items-center gap-2 text-sm text-gray-700 hover:bg-gray-100"
+          >
+            <HiPencil className="w-4 h-4" />
+            <span>Edit</span>
+          </Dropdown.Item>
+          <Dropdown.Item
+            onClick={() => handleStatusUpdate(row)}
+            className="flex items-center gap-2 text-sm text-gray-700 hover:bg-gray-100 "
+          >
+            <HiCheckCircle className="w-4 h-4" />
+            Mark Completed
+          </Dropdown.Item>
+          <Dropdown.Item
+            onClick={() => handleInvoiceDownload(row._id)}
+            className="flex items-center gap-2 text-sm text-gray-700 hover:bg-gray-100 "
+          >
+            <HiDownload className="w-4 h-4" />
+            Download Invoice
+          </Dropdown.Item>
+          <Dropdown.Item
+            onClick={() => handleDeleteClick(row)}
+            className="flex items-center gap-2 text-sm text-red-600 hover:bg-red-50"
+          >
+            <HiTrash className="w-4 h-4" />
+            <span>Delete</span>
+          </Dropdown.Item>
+        </Dropdown>
+      ),
+      button: true,
+      width: "160px",
+    },
+  ];
 
-      const handleExport = () => {
-          if (!data || data.length === 0) {
-            toast.warning("No data to export");
-            return;
-          }
-      
-          const exportData = data.map((item) => ({
-            caseName: item?.name || "",
-            surgeryDate: item.surgeryDate || "",
-            hospital: item.hospitalName || item.hospital?.name || "",
-            doctor: item.doctorName || item.doctor?.name || "",
-            principle: item.principalName || item.principle?.name || "",
-            category: item.category || item.category?.name || "",
-            subcategory: item.subcategory || item.subcategory?.name || "",
-            dpValue: item.dpValue?.toString() || "",
-            sellingPrice: item.sellingPrice?.toString() || "",
-            notes: item.status || "",
-          }));
+  const customStyles = {
+    headRow: {
+      style: {
+        backgroundColor: "lightblue",
+        borderBottomWidth: "1px",
+        borderBottomColor: "#e5e7eb",
+        fontWeight: 600,
+      },
+    },
+    headCells: {
+      style: {
+        fontSize: "14px",
+        color: "#111827",
+        paddingLeft: "16px",
+        paddingRight: "16px",
+      },
+    },
+    rows: {
+      style: {
+        fontSize: "14px",
+        color: "#374151",
+        backgroundColor: "white",
+      },
+    },
+    pagination: {
+      style: {
+        borderTop: "1px solid #e5e7eb",
+        padding: "16px",
+      },
+    },
+  };
 
-
-         
-      
-          const csv = Papa.unparse(exportData);
-          const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-          const url = URL.createObjectURL(blob);
-          const link = document.createElement("a");
-          link.setAttribute("href", url);
-          link.setAttribute("download", "inhouse_cases.csv");
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        };
-    
   return (
     <div className="p-6 bg-white rounded-lg shadow-sm">
-      <div className="flex items-center justify-between flex-wrap gap-4 mb-4">
-        <div className="flex items-end gap-2">
-          <div className="flex flex-col text-xs">
-            <Label htmlFor="fromDate" className="mb-1 font-medium">
-              From Date:
-            </Label>
-            <TextInput
-              id="fromDate"
-              type="date"
-              value={fromDate}
-              onChange={(e) => setFromDate(e.target.value)}
-              sizing="sm"
-            />
-          </div>
-          <div className="flex flex-col text-xs">
-            <Label htmlFor="toDate" className="mb-1 font-medium">
-              To Date:
-            </Label>
-            <TextInput
-              id="toDate"
-              type="date"
-              value={toDate}
-              onChange={(e) => setToDate(e.target.value)}
-              sizing="sm"
-            />
-          </div>
-           <div className="flex-grow max-w-[250px]">
-            <Label htmlFor="search" className="mb-1 font-medium">
-              Search
-            </Label>
-                <TextInput
-                  // icon={HiSearch}
-                  type="text"
-                  placeholder="Search cases..."
-                  value={searchTerm}
-                  sizing="sm"
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-        </div>
-
-        <h1 className="text-xl font-bold whitespace-nowrap">CASES LIST</h1>
-
-        <div className="flex gap-2">
-          {/* <Button onClick={() => handleExport()}>Export to Excel</Button> */}
-          <Dropdown label="Actions">
-            <Dropdown.Item as="label" htmlFor="import-file" >
-              Import
-            </Dropdown.Item>
-            <Dropdown.Item onClick={handleExport}>Export</Dropdown.Item>
-          </Dropdown>
-          <Button color="blue" onClick={onAdd}>
-            Add Cases
-          </Button>
-        </div>
-      </div>
-
       <DataTable
         columns={columns}
         data={filteredItems}
@@ -334,10 +275,11 @@ const handleStatusUpdate = (id) => {
         noDataComponent="No data available."
       />
 
+      {/* Delete Modal */}
       <DeleteCase
         show={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        caseId={selectedCase?.id}
+        caseId={selectedCase?._id}
         caseName={
           selectedCase?.caseNumber ||
           selectedCase?.patientName ||
@@ -349,6 +291,34 @@ const handleStatusUpdate = (id) => {
           setDeleteModalOpen(false);
         }}
       />
+
+     
+      <Modal show={statusModalOpen} onClose={() => setStatusModalOpen(false)}  size="md">
+        <Modal.Header>Confirm Completion</Modal.Header>
+        <Modal.Body>
+          <p>
+            Are you sure you want to mark{" "}
+            <span className="font-semibold text-gray-800">
+              {caseToUpdate?.caseNumber || caseToUpdate?.patientName}
+            </span>{" "}
+            as <span className="text-green-600 font-semibold">Completed</span>?
+          </p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            color="success"
+            onClick={() => {
+              onStatusUpdate(caseToUpdate._id, "Completed");
+              setStatusModalOpen(false);
+            }}
+          >
+            Yes, Mark Completed
+          </Button>
+          <Button color="gray" onClick={() => setStatusModalOpen(false)}>
+            Cancel
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

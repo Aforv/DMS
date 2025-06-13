@@ -7,6 +7,7 @@ import {
   Drawer,
   Textarea,
   Select,
+  Dropdown,
 } from "flowbite-react";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -16,6 +17,7 @@ import "react-toastify/dist/ReactToastify.css";
 import CaseTable from './CaseTable';
 import DeleteCase from './DeleteCase';
 import { useAuth } from '../Authentication/AuthContext';
+import Papa from "papaparse"; 
 
 function AddCaseData() {
   const [openModal, setOpenModal] = useState(false);
@@ -49,11 +51,22 @@ function AddCaseData() {
   const [subcategories, setSubcategories] = useState([]);
   const [principles, setPrinciples] = useState([]);
   const [products, setProducts] = useState([]);
-  
-const{token} = useAuth()
+   const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const [openModalDrawer, setOpenModalDrawer] = useState(false);
+  const [formDataDrawer, setFormDataDrawer] = useState({
+    _id: null,
+    nameOfThePatient: "",
+    ipNo: "",
+    usedProducts: [],
+    paymentType: "",
+  });
+
+
+   const{token} = useAuth()
   const axiosConfig = () => ({
     headers: {
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${ "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzE4M2UzMDRkYWI3NzA4NDE3ZDM1NyIsImlhdCI6MTc0OTgwMDQ1NSwiZXhwIjoxNzUyMzkyNDU1fQ.XvNNIFpNSfIiCi7y9CGKPJaXoE_gDmKekn1Mece-xfM"}`,
     },
   });
 
@@ -145,6 +158,13 @@ const{token} = useAuth()
       setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
   };
+    const handleOnchange = (e) => {
+  const { name, value } = e.target;
+  setFormDataDrawer((prev) => ({
+    ...prev,
+    [name]: value,
+  }));
+};
 
   const submit = async (e) => {
     e.preventDefault();
@@ -206,7 +226,7 @@ const{token} = useAuth()
       toast.success("Case deleted.");
       fetchData();
     } catch {
-      toast.error("Delete failed.");
+      // toast.error("Delete failed.");
     }
   };
 
@@ -290,6 +310,7 @@ const{token} = useAuth()
     setErrors({});
     setIsEdit(false);
     setOpenModal(false);
+    setOpenModalDrawer(false)
   };
 
 
@@ -344,30 +365,173 @@ const{token} = useAuth()
   };
 
   const openAddDrawer = () => {
-    setFormData({
-      _id: null,
-      caseNumber: "",
-      patientName: "",
-      patientAge: "",
-      patientGender: "",
-      surgeryDate: "",
-      hospital: "",
-      doctor: "",
-      principle: "",
-      category: "",
-      subcategory: "",
-      dpValue: "",
-      sellingPrice: "",
-      notes: "",
-      products: [],
+    setFormDataDrawer({
+    _id: null,
+    nameOfThePatient: "",
+    ipNo: "",
+    usedProducts: [],
+    paymentType: "",
     });
     setIsEdit(false);
-    setOpenModal(true);
+    setOpenModalDrawer(true);
+  };
+
+  const handleExport = () => {
+    if (!dataList || dataList.length === 0) {
+      toast.warning("No data to export");
+      return;
+    }
+  
+    const exportData = dataList.map((item) => ({
+      caseNumber: item?.caseNumber || "",
+      surgeryDate: item.surgeryDate || "",
+      hospital: item.hospitalName || "",
+      doctor: item.doctorName || "",
+      principle: item.principalName || "",
+      category: item.category || "",
+      subcategory: item.subcategory || "",
+      dpValue: item.dpValue?.toString() || "",
+      sellingPrice: item.sellingPrice?.toString() || "",
+      status: item.status || "",
+    }));
+  
+    const csv = Papa.unparse(exportData);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "cases_export.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
     <>
       <ToastContainer position="top-right" autoClose={3000} />
+<div className="flex items-center justify-between flex-wrap gap-4 mb-4">
+        <div className="flex items-end gap-2">
+          <div className="flex flex-col text-xs">
+            <Label htmlFor="fromDate" className="mb-1 font-medium">
+              From Date:
+            </Label>
+            <TextInput
+              id="fromDate"
+              type="date"
+              value={fromDate}
+              onChange={(e) => setFromDate(e.target.value)}
+              sizing="sm"
+            />
+          </div>
+          <div className="flex flex-col text-xs">
+            <Label htmlFor="toDate" className="mb-1 font-medium">
+              To Date:
+            </Label>
+            <TextInput
+              id="toDate"
+              type="date"
+              value={toDate}
+              onChange={(e) => setToDate(e.target.value)}
+              sizing="sm"
+            />
+          </div>
+          <div className="flex-grow max-w-[250px]">
+            <Label htmlFor="search" className="mb-1 font-medium">
+              Search
+            </Label>
+            <TextInput
+              // icon={HiSearch}
+              type="text"
+              placeholder="Search cases..."
+              value={searchTerm}
+              sizing="sm"
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <h1 className="text-xl font-bold whitespace-nowrap">CASES LIST</h1>
+
+        <div className="flex gap-2">
+          <Dropdown label="Actions">
+            <Dropdown.Item
+              as="label"
+              htmlFor="import-file"
+              onClick={openAddDrawer}
+            >
+              After Case
+            </Dropdown.Item>
+            <Dropdown.Item as="label" htmlFor="import-file">
+              Import
+            </Dropdown.Item>
+            <Dropdown.Item onClick={handleExport}>Export</Dropdown.Item>
+          </Dropdown>
+          <Button color="blue" onClick={openAddDrawer}>
+            Add Cases
+          </Button>
+        </div>
+      </div>
+
+      <Drawer
+        open={openModalDrawer}
+        // onClick={() => setOpenModalDrawer(false)}
+        onClose={resetForm}
+        position="right"
+        size="full"
+        className="w-[90vw] max-w-[400px]"
+      >
+        <DrawerHeader title="After Case" />
+        <div>
+          <Label>Name of the Patient</Label>
+
+          <TextInput
+            type="text"
+            value={formDataDrawer.nameOfThePatient}
+            onChange={handleOnchange}
+          />
+        </div>
+        <div>
+          <Label>IP No</Label>
+
+          <TextInput
+            type="text"
+            value={formDataDrawer.ipNo}
+            onChange={handleOnchange}
+          />
+        </div>
+        <div>
+          <Label>Used Products</Label>
+          <TextInput
+            type="text"
+            value={formDataDrawer.ipNo}
+            onChange={handleOnchange}
+          />
+        </div>
+        <div className="mb-4">
+          <Label>Payment Type</Label>
+          <Select
+            value={formDataDrawer.paymentType}
+            onChange={(e) =>
+              setFormDataDrawer({
+                ...formDataDrawer,
+                paymentType: e.target.value,
+              })
+            }
+          >
+            <option value="">Select</option>
+            <option>Invoice</option>
+            <option>Cash</option>
+          </Select>
+        </div>
+        <div className="flex justify-start gap-2">
+           <Button type="button" color="failure" onClick={resetForm}>
+            Cancel
+          </Button>
+          <Button>Add</Button>
+         
+        </div>
+      </Drawer>
+
 
       <div className="flex flex-wrap items-center justify-between gap-1 mb-2">
 

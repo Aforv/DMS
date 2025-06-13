@@ -11,7 +11,8 @@ export default function DeleteCase({ show, onClose, caseId, caseName, onSuccess 
     try {
       await axios.delete(`http://43.250.40.133:5005/api/v1/cases/${caseId}`,  {
       headers: {
-          Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${ "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzE4M2UzMDRkYWI3NzA4NDE3ZDM1NyIsImlhdCI6MTc0OTgwMDQ1NSwiZXhwIjoxNzUyMzkyNDU1fQ.XvNNIFpNSfIiCi7y9CGKPJaXoE_gDmKekn1Mece-xfM"}`,
+
         }
       });
       toast.success(`${caseName} deleted successfully`);
