@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
-import CloseIcon from "@mui/icons-material/Close";
+// import CloseIcon from "@mui/icons-material/Close";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../Authentication/AuthContext";
 
@@ -110,7 +110,7 @@ const AddInvoiceForm = ({ showModal, setShowModal, fetchInvoices, onClose }) => 
             className="absolute top-3 right-3 text-gray-600 hover:text-gray-900 text-2xl"
             aria-label="Close modal"
           >
-            <CloseIcon />
+            {/* <CloseIcon /> */}
           </button>
 
           <h2 className="text-xl font-semibold text-gray-800 mb-6 text-center">
