@@ -39,5 +39,9 @@ pipeline {
         failure {
             echo "❌ Build failed. Check logs in Jenkins."
         }
+        always {
+      // Clean workspace after build (optional)
+            cleanWs()
+        }
     }
 }
