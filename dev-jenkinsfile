@@ -9,6 +9,13 @@ pipeline {
     }
 
     stages {
+
+        stage('Clean Workspace') {
+            steps {
+                deleteDir()
+            }
+        }
+
         stage('Clone Repository') {
             steps {
                 git url: 'https://github.com/Aforv/DMS.git', branch: 'dev'
