@@ -30,6 +30,8 @@ import InventoryAdjustments from "./components/Inventory Adjustments/InventoryAd
 import PhysicalCountsTable from "./components/PhysicalCount/PhysicalCountsTable";
 import AddNestedsubcategories from "./components/Categories/Addnestedsubcategories";
 
+import PortfolioTable from "./components/Portfolio/PortFolioTable";
+
 function App() {
   return (
     <>
@@ -74,6 +76,7 @@ function App() {
                     <Route path="/users/list" element={<UsersTable />} />
                     <Route path = "/inhouseinventory" element = {<InhouseInventory/>}/>
                     <Route path="/principle" element={<PrinciplesModule />} />
+                    <Route path ="/portfolio" element={<PortfolioTable/>}/>
                     <Route path="/principle/list" element={< DataTableWithMenuPrinciple/>} />
                     <Route path="/department" element={<DepartmentsManager />} />
                     <Route path="/invoices/list" element={<InvoiceTable />} />

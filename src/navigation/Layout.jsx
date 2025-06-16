@@ -284,6 +284,7 @@ export default function Layout({ children }) {
     { name: "InhouseInventory", icon: HomeIcon, path: "/inhouseinventory" },
     { name: "Doctors", icon: HiUser, path: "/doctor" },
     { name: "Principle", icon: HiUsers, path: "/principle" },
+    { name: "PortFolio", icon: HiUsers, path: "/portfolio" },
     { name: "Department", icon: MdApartment, path: "/department" },
     { name: "Invoices", icon: HiOfficeBuilding, path: "/invoices/list" },
     {name:"Adjustments",icon:HiOutlineLibrary,path:"/inventoryadjustment"},
