@@ -7,7 +7,6 @@ import {
   Drawer,
   Textarea,
   Select,
-  Dropdown,
 } from "flowbite-react";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -16,13 +15,13 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CaseTable from './CaseTable';
 import DeleteCase from './DeleteCase';
-import { useAuth } from '../Authentication/AuthContext';
+import { Dropdown } from "flowbite-react";
 import Papa from "papaparse"; 
 
 function AddCaseData() {
-  const [openModal, setOpenModal] = useState(false);
-  const [formData, setFormData] = useState({
-    _id: null,
+     const [openModal, setOpenModal] = useState(false);
+      const [formData, setFormData] = useState({
+        _id: null,
     caseNumber: "",
     patientName: "",
     patientAge: "",
@@ -39,83 +38,82 @@ function AddCaseData() {
     editNote: "",
     notes: "",
     products: [],
-  });
+      });
+      const [fromDate, setFromDate] = useState("");
+const [toDate, setToDate] = useState("");
+const [openModalDrawer, setOpenModalDrawer] = useState(false);
+const [formDataDrawer, setFormDataDrawer] = useState({
+  _id: null,
+  nameOfThePatient: "",
+  ipNo: "",
+  usedProducts: [],
+  paymentType: "",
+});
+    
+      const [errors, setErrors] = useState({});
+      const [dataList, setDataList] = useState([]);
+      const [searchTerm, setSearchTerm] = useState("");
+      const [isEdit, setIsEdit] = useState(false);
+      const [hospitals, setHospitals] = useState([]);
+      const [doctors, setDoctors] = useState([]);
+      const [categories, setCategories] = useState([]);
+      const [subcategories, setSubcategories] = useState([]);
+      const [principles, setPrinciples] = useState([]);
+      const [products, setProducts] = useState([]);
+  
+    
+      const axiosConfig = () => ({
+        headers: {
+          Authorization: `Bearer ${"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzE4M2UzMDRkYWI3NzA4NDE3ZDM1NyIsImlhdCI6MTc0OTEyOTA2NCwiZXhwIjoxNzUxNzIxMDY0fQ.CUIQgfi6wN15fTDCN0bT8ycSD6v6S_72Ive9Zu8sgZY"}`,
+        },
+      });
+    
+      const fetchData = async () => {
+          try {
+            const res = await axios.get("http://43.250.40.133:5005/api/v1/cases", axiosConfig());
+            const mapped = (res.data?.data || []).map((item) => ({
+              ...item,
+              hospitalName: item.hospital?.name || item.hospital,
+              doctorName: item.doctor?.name || item.doctor,
+              principalName: item.principle?.name || item.principle,
+              category: item.category?.name || item.category,
+              subcategory: item.subcategory?.name || item.subcategory,
+            }));
+            setDataList(mapped);
+          } catch (err) {
+            toast.error("Failed to load cases.");
+          }
+        };
+    
+      const fetchDropdownData = async () => {
+        try {
+          const [hospitalsRes, doctorsRes, categoriesRes, subcategoriesRes, principlesRes, productsRes] = await Promise.all([
+            axios.get("http://43.250.40.133:5005/api/v1/hospitals", axiosConfig()),
+            axios.get("http://43.250.40.133:5005/api/v1/doctors", axiosConfig()),
+            axios.get("http://43.250.40.133:5005/api/v1/categories", axiosConfig()),
+            axios.get("http://43.250.40.133:5005/api/v1/subcategories", axiosConfig()),
+            axios.get("http://43.250.40.133:5005/api/v1/principles", axiosConfig()),
+            axios.get("http://43.250.40.133:5005/api/v1/products", axiosConfig()),
+          ]);
+    
+          setHospitals(hospitalsRes.data.data || []);
+          setDoctors(doctorsRes.data.data || []);
+          setCategories(categoriesRes.data.data || []);
+          setSubcategories(subcategoriesRes.data.data || []);
+          setPrinciples(principlesRes.data.data || []);
+          setProducts(productsRes.data.data || []);
+        } catch (error) {
+          console.error("Dropdown fetch error:", error);
+          toast.error("Failed to load dropdown data.");
+        }
+      };
+    
+      useEffect(() => {
+        fetchData();
+        fetchDropdownData();
+      }, []);
 
-  const [errors, setErrors] = useState({});
-  const [dataList, setDataList] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isEdit, setIsEdit] = useState(false);
-  const [hospitals, setHospitals] = useState([]);
-  const [doctors, setDoctors] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [subcategories, setSubcategories] = useState([]);
-  const [principles, setPrinciples] = useState([]);
-  const [products, setProducts] = useState([]);
-   const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
-  const [openModalDrawer, setOpenModalDrawer] = useState(false);
-  const [formDataDrawer, setFormDataDrawer] = useState({
-    _id: null,
-    nameOfThePatient: "",
-    ipNo: "",
-    usedProducts: [],
-    paymentType: "",
-  });
-
-
-   const{token} = useAuth()
-  const axiosConfig = () => ({
-    headers: {
-      Authorization: `Bearer ${ "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzE4M2UzMDRkYWI3NzA4NDE3ZDM1NyIsImlhdCI6MTc0OTgwMDQ1NSwiZXhwIjoxNzUyMzkyNDU1fQ.XvNNIFpNSfIiCi7y9CGKPJaXoE_gDmKekn1Mece-xfM"}`,
-    },
-  });
-
-  const fetchData = async () => {
-    try {
-      const res = await axios.get("http://43.250.40.133:5005/api/v1/cases", axiosConfig());
-      const mapped = (res.data?.data || []).map((item) => ({
-        ...item,
-        hospitalName: item.hospital?.name || item.hospital,
-        doctorName: item.doctor?.name || item.doctor,
-        principalName: item.principle?.name || item.principle,
-        category: item.category?.name || item.category,
-        subcategory: item.subcategory?.name || item.subcategory,
-      }));
-      setDataList(mapped);
-    } catch (err) {
-      toast.error("Failed to load cases.");
-    }
-  };
-
-  const fetchDropdownData = async () => {
-    try {
-      const [hospitalsRes, doctorsRes, categoriesRes, subcategoriesRes, principlesRes, productsRes] = await Promise.all([
-        axios.get("http://43.250.40.133:5005/api/v1/hospitals", axiosConfig()),
-        axios.get("http://43.250.40.133:5005/api/v1/doctors", axiosConfig()),
-        axios.get("http://43.250.40.133:5005/api/v1/categories", axiosConfig()),
-        axios.get("http://43.250.40.133:5005/api/v1/subcategories", axiosConfig()),
-        axios.get("http://43.250.40.133:5005/api/v1/principles", axiosConfig()),
-        axios.get("http://43.250.40.133:5005/api/v1/products", axiosConfig()),
-      ]);
-
-      setHospitals(hospitalsRes.data.data || []);
-      setDoctors(doctorsRes.data.data || []);
-      setCategories(categoriesRes.data.data || []);
-      setSubcategories(subcategoriesRes.data.data || []);
-      setPrinciples(principlesRes.data.data || []);
-      setProducts(productsRes.data.data || []);
-    } catch (error) {
-      console.error("Dropdown fetch error:", error);
-      toast.error("Failed to load dropdown data.");
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-    fetchDropdownData();
-  }, []);
-
-  const validate = () => {
+     const validate = () => {
     const tempErrors = {};
     if (!formData.caseNumber) tempErrors.caseNumber = "Required";
     if (!formData.patientName) tempErrors.patientName = "Required";
@@ -140,25 +138,7 @@ function AddCaseData() {
     return Object.keys(tempErrors).length === 0;
   };
 
-
-  const handleChange = (e) => {
-    const { name, value, options, multiple } = e.target;
-
-    if (multiple) {
-      const values = [];
-      for (let i = 0; i < options.length; i++) {
-        if (options[i].selected) {
-          values.push(options[i].value);
-        }
-      }
-      setFormData((prev) => ({ ...prev, [name]: values }));
-      setErrors((prev) => ({ ...prev, [name]: undefined }));
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
-      setErrors((prev) => ({ ...prev, [name]: undefined }));
-    }
-  };
-    const handleOnchange = (e) => {
+  const handleOnchange = (e) => {
   const { name, value } = e.target;
   setFormDataDrawer((prev) => ({
     ...prev,
@@ -166,130 +146,165 @@ function AddCaseData() {
   }));
 };
 
-  const submit = async (e) => {
-    e.preventDefault();
-    if (!validate()) return;
+const resetFormDrawer = () => {
+  setFormDataDrawer({
+    _id: null,
+    nameOfThePatient: "",
+    ipNo: "",
+    usedProducts: [],
+    paymentType: "",
+  });
+  setOpenModalDrawer(false);
+};
 
-    const payload = {
-      caseNumber: formData.caseNumber,
-      patientName: formData.patientName,
-      patientAge: parseInt(formData.patientAge),
-      patientGender: formData.patientGender,
-      surgeryDate: formData.surgeryDate,
-      hospital: formData.hospital,
-      doctor: formData.doctor,
-      principle: formData.principle,
-      category: formData.category,
-      subcategory: formData.subcategory,
-      dpValue: parseFloat(formData.dpValue),
-      sellingPrice: parseFloat(formData.sellingPrice),
-      notes: formData.notes,
-      products: formData.products.map((p) => ({
-        product: p.product,
-        quantity: parseInt(p.quantity),
-        unit_price: parseFloat(p.unit_price),
-        dp_value: parseFloat(p.dp_value),
-        batch_number: p.batch_number,
-      })),
-    };
+const openAfterCaseDrawer = () => {
+  setFormDataDrawer({
+    _id: null,
+    nameOfThePatient: "",
+    ipNo: "",
+    usedProducts: [],
+    paymentType: "",
+  });
+  setOpenModalDrawer(true);
+};
 
+    
+      const handleChange = (e) => {
+        const { name, value, options, multiple } = e.target;
+    
+        if (multiple) {
+          const values = [];
+          for (let i = 0; i < options.length; i++) {
+            if (options[i].selected) {
+              values.push(options[i].value);
+            }
+          }
+          setFormData((prev) => ({ ...prev, [name]: values }));
+          setErrors((prev) => ({ ...prev, [name]: undefined }));
+        } else {
+          setFormData((prev) => ({ ...prev, [name]: value }));
+          setErrors((prev) => ({ ...prev, [name]: undefined }));
+        }
+      };
+    
+      const submit = async (e) => {
+        e.preventDefault();
+        if (!validate()) return;
 
+        const payload = {
+              caseNumber: formData.caseNumber,
+              patientName: formData.patientName,
+              patientAge: parseInt(formData.patientAge),
+              patientGender: formData.patientGender,
+              surgeryDate: formData.surgeryDate,
+              hospital: formData.hospital,
+              doctor: formData.doctor,
+              principle: formData.principle,
+              category: formData.category,
+              subcategory: formData.subcategory,
+              dpValue: parseFloat(formData.dpValue),
+              sellingPrice: parseFloat(formData.sellingPrice),
+              notes: formData.notes,
+              products: formData.products.map((p) => ({
+                product: p.product,
+                quantity: parseInt(p.quantity),
+                unit_price: parseFloat(p.unit_price),
+                dp_value: parseFloat(p.dp_value),
+                batch_number: p.batch_number,
+              })),
+            };
+        
+       
 
-    try {
-      if (isEdit && formData._id) {
-        const updatePayload = {
-          status: formData.status,
-          sellingPrice: parseFloat(formData.sellingPrice),
-          notes: formData.notes,
+           try {
+    if (isEdit && formData._id) {
+      const updatePayload = {
+        status: formData.status,
+        sellingPrice: parseFloat(formData.sellingPrice),
+        notes: formData.notes,
+      };
+      await axios.put(`http://43.250.40.133:5005/api/v1/cases/${formData._id}`, updatePayload, axiosConfig());
+      toast.success("Case updated.");
+    } else {
+      await axios.post("http://43.250.40.133:5005/api/v1/cases", payload, axiosConfig());
+      toast.success("Case created.");
+    }
+
+    fetchData();
+    resetForm();
+  } catch (err) {
+    console.error("Submit error:", err?.response?.data || err.message);
+    toast.error("Failed to save case.");
+  }
+};
+    
+   
+
+      const deleteCase = async (_id) => {
+         
+          // try {
+            // await axios.delete(`http://43.250.40.133:5005/api/v1/cases/${_id}`, axiosConfig());
+            // toast.success("Case deleted.");
+            fetchData();
+          // } catch {
+          //   toast.error("Delete failed.");
+          // }
         };
-        await axios.put(`http://43.250.40.133:5005/api/v1/cases/${formData._id}`, updatePayload, axiosConfig());
-        toast.success("Case updated.");
-      } else {
-        await axios.post("http://43.250.40.133:5005/api/v1/cases", payload, axiosConfig());
-        toast.success("Case created.");
-      }
 
-      fetchData();
-      resetForm();
-    } catch (err) {
-      console.error("Submit error:", err?.response?.data || err.message);
-      toast.error("Failed to save case.");
-    }
-  };
+        const updateStatus = async (_id, status) => {
+            try {
+              await axios.put(`http://43.250.40.133:5005/api/v1/cases/${_id}/status`, {
+                status,
+                notes: "Updated from UI",
+              }, axiosConfig());
+              toast.success("Status updated.");
+              fetchData();
+            } catch {
+              toast.error("Status update failed.");
+            }
+          };
 
-
-
-  const deleteCase = async (id) => {
-
-    try {
-      await axios.delete(`http://43.250.40.133:5005/api/v1/cases/${formData._id}`, axiosConfig());
-      toast.success("Case deleted.");
-      fetchData();
-    } catch {
-      // toast.error("Delete failed.");
-    }
-  };
-
-  const updateStatus = async (_id, status) => {
-    console.log("Attempting status update for:", _id);
-    try {
-      await axios.put(
-        `http://43.250.40.133:5005/api/v1/cases/${_id}/status`,
-        {
-          status,
-          notes: "Updated from UI"
-        },
-        axiosConfig()
-      );
-      toast.success("Status updated.");
-      fetchData();
-    } catch (err) {
-      console.error("Status update failed:", err.response?.data || err.message);
-      toast.error("Status update failed.");
-    }
-  };
-
-  const downloadInvoice = async (id) => {
-    try {
-      const res = await axios.get(`http://43.250.40.133:5005/api/v1/cases/${formData._id}/invoice`, {
-        ...axiosConfig(),
-        responseType: "blob",
-      });
-      const url = URL.createObjectURL(new Blob([res.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `case-${id}-invoice.pdf`);
-      document.body.appendChild(link);
-      link.click();
-    } catch {
-      toast.error("Invoice download failed.");
-    }
-  };
-
-  const addProduct = () => {
-    setFormData((prev) => ({
-      ...prev,
-      products: [
-        ...prev.products,
-        { product: "", quantity: 1, unit_price: "", dp_value: "", batch_number: "" },
-      ],
-    }));
-  };
-
-  const removeProduct = (index) => {
-    const updated = [...formData.products];
-    updated.splice(index, 1);
-    setFormData((prev) => ({ ...prev, products: updated }));
-  };
-
-  const updateProductField = (index, field, value) => {
-    const updated = [...formData.products];
-    updated[index][field] = value;
-    setFormData((prev) => ({ ...prev, products: updated }));
-  };
-
-
-  const resetForm = () => {
+          const downloadInvoice = async (_id) => {
+              try {
+                const res = await axios.get(`http://43.250.40.133:5005/api/v1/cases/${formData._id}/invoice`, {
+                  ...axiosConfig(),
+                  responseType: "blob",
+                });
+                const url = URL.createObjectURL(new Blob([res.data]));
+                const link = document.createElement("a");
+                link.href = url;
+                link.setAttribute("download", `case-${_id}-invoice.pdf`);
+                document.body.appendChild(link);
+                link.click();
+              } catch {
+                toast.error("Invoice download failed.");
+              }
+            };
+          
+            const addProduct = () => {
+              setFormData((prev) => ({
+                ...prev,
+                products: [
+                  ...prev.products,
+                  { product: "", quantity: 1, unit_price: "", dp_value: "", batch_number: "" },
+                ],
+              }));
+            };
+          
+            const removeProduct = (index) => {
+              const updated = [...formData.products];
+              updated.splice(index, 1);
+              setFormData((prev) => ({ ...prev, products: updated }));
+            };
+          
+            const updateProductField = (index, field, value) => {
+              const updated = [...formData.products];
+              updated[index][field] = value;
+              setFormData((prev) => ({ ...prev, products: updated }));
+            };
+          
+    
+     const resetForm = () => {
     setFormData({
       _id: null,
       caseNumber: "",
@@ -310,31 +325,30 @@ function AddCaseData() {
     setErrors({});
     setIsEdit(false);
     setOpenModal(false);
-    setOpenModalDrawer(false)
   };
 
+    
+      const filteredList = dataList.filter((item) => {
+        const valuesToSearch = [
+          item.caseNumber,
+          item.patientName,
+          item.patientGender,
+          item.hospital,
+          item.doctor,
+          item.category,
+          item.subcategory || item.subcategories || item.subcategory?.name || "" ,
+          item.dpValue?.toString(),
+          item.sellingPrice?.toString(),
+          item.surgeryDate? item.surgeryDate.slice(0,10):"",
+          item.notes
 
-  const filteredList = dataList.filter((item) => {
-    const valuesToSearch = [
-      item.caseNumber,
-      item.patientName,
-      item.patientGender,
-      item.hospital,
-      item.doctor,
-      item.category,
-      item.subcategory || item.subcategories || item.subcategory?.name || "",
-      item.dpValue?.toString(),
-      item.sellingPrice?.toString(),
-      item.surgeryDate ? item.surgeryDate.slice(0, 10) : "",
-      item.notes
+        ]
+          .join(" ")
+          .toLowerCase();
+        return valuesToSearch.includes(searchTerm.toLowerCase());
+      });
 
-    ]
-      .join(" ")
-      .toLowerCase();
-    return valuesToSearch.includes(searchTerm.toLowerCase());
-  });
-
-  const editItem = (item) => {
+     const editItem = (item) => {
     setFormData({
       _id: item._id,
       caseNumber: item.caseNumber || "",
@@ -364,52 +378,63 @@ function AddCaseData() {
     setOpenModal(true);
   };
 
-  const openAddDrawer = () => {
-    setFormDataDrawer({
+      const openAddDrawer = () => {
+  setFormData({
     _id: null,
-    nameOfThePatient: "",
-    ipNo: "",
-    usedProducts: [],
-    paymentType: "",
-    });
-    setIsEdit(false);
-    setOpenModalDrawer(true);
-  };
+    caseNumber: "",
+    patientName: "",
+    patientAge: "",
+    patientGender: "",
+    surgeryDate: "",
+    hospital: "",
+    doctor: "",
+    principle: "",
+    category: "",
+    subcategory: "",
+    dpValue: "",
+    sellingPrice: "",
+    notes: "",
+    products: [],
+  });
+  setIsEdit(false);
+  setOpenModal(true);
+};
 
-  const handleExport = () => {
-    if (!dataList || dataList.length === 0) {
-      toast.warning("No data to export");
-      return;
-    }
-  
-    const exportData = dataList.map((item) => ({
-      caseNumber: item?.caseNumber || "",
-      surgeryDate: item.surgeryDate || "",
-      hospital: item.hospitalName || "",
-      doctor: item.doctorName || "",
-      principle: item.principalName || "",
-      category: item.category || "",
-      subcategory: item.subcategory || "",
-      dpValue: item.dpValue?.toString() || "",
-      sellingPrice: item.sellingPrice?.toString() || "",
-      status: item.status || "",
-    }));
-  
-    const csv = Papa.unparse(exportData);
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.setAttribute("href", url);
-    link.setAttribute("download", "cases_export.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+const handleExport = () => {
+  if (!dataList || dataList.length === 0) {
+    toast.warning("No data to export");
+    return;
+  }
 
+  const exportData = dataList.map((item) => ({
+    caseNumber: item?.caseNumber || "",
+    surgeryDate: item.surgeryDate || "",
+    hospital: item.hospitalName || "",
+    doctor: item.doctorName || "",
+    principle: item.principalName || "",
+    category: item.category || "",
+    subcategory: item.subcategory || "",
+    dpValue: item.dpValue?.toString() || "",
+    sellingPrice: item.sellingPrice?.toString() || "",
+    status: item.status || "",
+  }));
+
+  const csv = Papa.unparse(exportData);
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", "cases_export.csv");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+    
   return (
     <>
       <ToastContainer position="top-right" autoClose={3000} />
-<div className="flex items-center justify-between flex-wrap gap-4 mb-4">
+       <div className="flex items-center justify-between flex-wrap gap-4 mb-4">
         <div className="flex items-end gap-2">
           <div className="flex flex-col text-xs">
             <Label htmlFor="fromDate" className="mb-1 font-medium">
@@ -455,9 +480,8 @@ function AddCaseData() {
         <div className="flex gap-2">
           <Dropdown label="Actions">
             <Dropdown.Item
-              as="label"
-              htmlFor="import-file"
-              onClick={openAddDrawer}
+             
+             onClick={openAfterCaseDrawer}
             >
               After Case
             </Dropdown.Item>
@@ -474,13 +498,18 @@ function AddCaseData() {
 
       <Drawer
         open={openModalDrawer}
-        // onClick={() => setOpenModalDrawer(false)}
-        onClose={resetForm}
+        // onClick={() => setOpenModalDrawer(true)}
+        onClose={resetFormDrawer}
         position="right"
         size="full"
         className="w-[90vw] max-w-[400px]"
       >
-        <DrawerHeader title="After Case" />
+        <DrawerHeader>
+    <div className="flex items-center justify-between">
+      <h2 className="text-lg font-semibold">After Case</h2>
+      <button onClick={resetFormDrawer} className="text-gray-500 hover:text-gray-900 text-xl">&times;</button>
+    </div>
+  </DrawerHeader>
         <div>
           <Label>Name of the Patient</Label>
 
@@ -523,18 +552,18 @@ function AddCaseData() {
             <option>Cash</option>
           </Select>
         </div>
-        <div className="flex justify-start gap-2">
-           <Button type="button" color="failure" onClick={resetForm}>
+        <div className="flex justify-end gap-2">
+           <Button type="button" color="failure" onClick={resetFormDrawer}>
             Cancel
           </Button>
-          <Button>Add</Button>
+          <Button >Add</Button>
          
         </div>
       </Drawer>
 
 
       <div className="flex flex-wrap items-center justify-between gap-1 mb-2">
-
+    
 
         <Drawer
           open={openModal}
@@ -738,6 +767,7 @@ function AddCaseData() {
           onAdd={openAddDrawer}
           onStatusUpdate={updateStatus}
           onInvoiceDownload={downloadInvoice}
+          // products={formData.products}
         />
       </div>
     </>
