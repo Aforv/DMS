@@ -147,6 +147,7 @@ const handleConfirmDelete = async (doctorId) => {
 },
     { name: "Hospital", selector: (row) => row.hospital?.name || "N/A" },
     { name: "Location", selector: (row) => row.location || "N/A" },
+    { name: "Targets", selector: (row) => row.targets || "N/A" },
     {
       name: "Actions",
       cell: (row) => (
