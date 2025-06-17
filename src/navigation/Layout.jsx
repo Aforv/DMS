@@ -16,6 +16,7 @@ import {
   HiSun,
   HiOfficeBuilding,
   HiUsers,
+  HiUserGroup,
 } from "react-icons/hi";
 
 import { RiFoldersLine } from "react-icons/ri";
@@ -287,7 +288,8 @@ export default function Layout({ children }) {
     { name: "Department", icon: MdApartment, path: "/department" },
     { name: "Invoices", icon: HiOfficeBuilding, path: "/invoices/list" },
     {name:"Adjustments",icon:HiOutlineLibrary,path:"/inventoryadjustment"},
-    { name: "Physical Counts", icon: HiUser, path: "/physicalcount/list" }
+    { name: "Physical Counts", icon: HiUser, path: "/physicalcount/list" },
+    { name: "Case Creation", icon: HiUserGroup, path: "/cases" }
   ];
 
   const activeMenuName = findActiveMenuName(menuItems, location.pathname) || "Dashboard";

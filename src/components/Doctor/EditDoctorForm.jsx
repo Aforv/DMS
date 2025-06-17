@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import Select from "react-select"; 
 import { useAuth } from "../Authentication/AuthContext";
 
 const EditDoctorForm = ({ show, setShow, fetchDoctors, selectedDoctor }) => {
@@ -11,9 +9,8 @@ const EditDoctorForm = ({ show, setShow, fetchDoctors, selectedDoctor }) => {
     email: "",
     phone: "",
     specialization: "",
-    hospitals: [], 
+    hospital: "",
     location: "",
-    targets: "", 
   });
 
   const [hospitals, setHospitals] = useState([]);
@@ -27,11 +24,8 @@ const EditDoctorForm = ({ show, setShow, fetchDoctors, selectedDoctor }) => {
         email: selectedDoctor.email || "",
         phone: selectedDoctor.phone || "",
         specialization: selectedDoctor.specialization || "",
-        hospitals: Array.isArray(selectedDoctor.hospitals)
-          ? selectedDoctor.hospitals.map((h) => (typeof h === "object" ? h._id : h))
-          : [],
+        hospital: selectedDoctor.hospital?._id || selectedDoctor.hospital || "",
         location: selectedDoctor.location || "",
-        targets: selectedDoctor.targets || "",
       });
       fetchHospitals();
     }
@@ -53,24 +47,9 @@ const EditDoctorForm = ({ show, setShow, fetchDoctors, selectedDoctor }) => {
     setFormData((prev) => ({ ...prev, [name]: value.trimStart() }));
   };
 
-  const handleHospitalChange = (selectedOptions) => {
-    const selectedIds = selectedOptions ? selectedOptions.map((opt) => opt.value) : [];
-    setFormData((prev) => ({
-      ...prev,
-      hospitals: selectedIds,
-    }));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
-    if (!formData.name || !formData.email || !formData.phone || !formData.targets) {
-      toast.error("Please fill all required fields");
-      setLoading(false);
-      return;
-    }
-
     try {
       const response = await axios.put(
         `http://43.250.40.133:5005/api/v1/doctors/${selectedDoctor._id}`,
@@ -86,22 +65,15 @@ const EditDoctorForm = ({ show, setShow, fetchDoctors, selectedDoctor }) => {
       fetchDoctors();
       setShow(false);
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Error updating doctor");
+      toast.error(
+        error?.response?.data?.message || "Error updating doctor"
+      );
     } finally {
       setLoading(false);
     }
   };
 
   if (!show) return null;
-
-  const hospitalOptions = hospitals.map((hosp) => ({
-    value: hosp._id,
-    label: hosp.name,
-  }));
-
-  const selectedHospitalOptions = hospitalOptions.filter((option) =>
-    formData.hospitals.includes(option.value)
-  );
 
   return (
     <div
@@ -124,6 +96,7 @@ const EditDoctorForm = ({ show, setShow, fetchDoctors, selectedDoctor }) => {
           <h2 className="text-2xl font-semibold text-gray-900 mb-6 text-center">
             Edit Doctor
           </h2>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Name */}
             <div>
@@ -171,40 +144,36 @@ const EditDoctorForm = ({ show, setShow, fetchDoctors, selectedDoctor }) => {
                 name="specialization"
                 value={formData.specialization}
                 onChange={handleChange}
+                required
                 className="mt-1 w-full border border-gray-300 rounded-md p-2"
               />
             </div>
 
-            {/* Hospitals (Multi Select with react-select) */}
-            <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700">Hospitals</label>
-              <Select
-                isMulti
-                options={hospitalOptions}
-                value={selectedHospitalOptions}
-                onChange={handleHospitalChange}
-                placeholder="Select hospitals..."
-                className="mt-1"
-              />
+            {/* Hospital */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Hospital</label>
+              <select
+                name="hospital"
+                value={formData.hospital}
+                onChange={handleChange}
+                required
+                className="mt-1 w-full border border-gray-300 rounded-md p-2 bg-white"
+              >
+                <option value="" disabled>Select hospital</option>
+                {hospitals.map((hosp) => (
+                  <option key={hosp._id} value={hosp._id}>
+                    {hosp.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Location */}
-            <div className="sm:col-span-2">
+            <div>
               <label className="block text-sm font-medium text-gray-700">Location</label>
               <input
                 name="location"
                 value={formData.location}
-                onChange={handleChange}
-                className="mt-1 w-full border border-gray-300 rounded-md p-2"
-              />
-            </div>
-
-            {/* Targets */}
-            <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700">Targets</label>
-              <input
-                name="targets"
-                value={formData.targets}
                 onChange={handleChange}
                 required
                 className="mt-1 w-full border border-gray-300 rounded-md p-2"
