@@ -283,6 +283,7 @@ export default function Layout({ children }) {
     { name:"Products" ,icon:FaShoppingCart,path:"/products"},
     { name: "InhouseInventory", icon: HomeIcon, path: "/inhouseinventory" },
     { name: "Doctors", icon: HiUser, path: "/doctor" },
+    { name: "Distributor", icon: HiUser, path: "/distributor" },
     { name: "Principle", icon: HiUsers, path: "/principle" },
     { name: "PortFolio", icon: HiUsers, path: "/portfolio" },
     { name: "Department", icon: MdApartment, path: "/department" },

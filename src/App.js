@@ -31,6 +31,7 @@ import PhysicalCountsTable from "./components/PhysicalCount/PhysicalCountsTable"
 import AddNestedsubcategories from "./components/Categories/Addnestedsubcategories";
 
 import PortfolioTable from "./components/Portfolio/PortFolioTable";
+import DistributorTable from "./components/Distributor/DistributorTable";
 
 function App() {
   return (
@@ -71,6 +72,7 @@ function App() {
                     <Route path="/dashboard/overview" element={<Overview />} />
                     <Route path = "/inventory" element = {<Inventory/>}/>
                     <Route path="/doctor" element={<DoctorsTable />} />
+                    <Route path="/distributor" element={<DistributorTable />} />
                     <Route path="/hospitals/list" element={<HospitalTable />} />
                      <Route path="/physicalcount/list" element={<PhysicalCountsTable />} />
                     <Route path="/users/list" element={<UsersTable />} />
