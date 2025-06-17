@@ -79,6 +79,50 @@ const AddCategoryPage = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
+                Principle
+              </label>
+             <select
+  value={"DUMMYPRINCIPLE"}
+      
+      className="w-full p-2 border rounded"
+      required
+    >
+      <option value="">Select Principle</option>
+         <option >
+          "Principle A"
+        </option>
+        <option>
+          "Principle B"
+        </option>
+        <option>
+          "Principle C"
+        </option>
+     </select>
+            </div>
+            <div>
+              <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
+                Portfolio
+              </label>
+             <select
+  value={"DUMMYPortfolio"}
+      
+      className="w-full p-2 border rounded"
+      required
+    >
+      <option value="">Select Portfolio</option>
+         <option >
+          "Portfolio A"
+        </option>
+        <option>
+          "Portfolio B"
+        </option>
+        <option>
+          "Portfolio C"
+        </option>
+      </select>
+            </div>
+            <div>
+              <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
                 Category Name
               </label>
               <input

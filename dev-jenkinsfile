@@ -1,0 +1,54 @@
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = 'dmsdev'
+        CONTAINER_NAME = 'dmsdev'
+        HOST_PORT = '10000'        // External port on host
+        CONTAINER_PORT = '10000'   // Internal container port (serve listens here)
+    }
+
+    stages {
+
+        stage('Clean Workspace') {
+            steps {
+                deleteDir()
+            }
+        }
+
+        stage('Clone Repository') {
+            steps {
+                git url: 'https://github.com/Aforv/DMS.git', branch: 'dev'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t $IMAGE_NAME .'
+            }
+        }
+
+        stage('Run Docker Container') {
+            steps {
+                sh '''
+                    docker stop $CONTAINER_NAME || true
+                    docker rm $CONTAINER_NAME || true
+                    docker run -d --name $CONTAINER_NAME -p $HOST_PORT:$CONTAINER_PORT $IMAGE_NAME
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ React App is running at http://localhost:$HOST_PORT"
+        }
+        failure {
+            echo "❌ Build failed. Check logs in Jenkins."
+        }
+        always {
+      // Clean workspace after build (optional)
+            cleanWs()
+        }
+    }
+}

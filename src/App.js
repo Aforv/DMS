@@ -28,6 +28,10 @@ import InvoiceTable from "./components/Invoices/InvoiceTable";
 import AddInvoiceForm from "./components/Invoices/AddInvoiceForm";
 import InventoryAdjustments from "./components/Inventory Adjustments/InventoryAdjustment";
 import PhysicalCountsTable from "./components/PhysicalCount/PhysicalCountsTable";
+import AddNestedsubcategories from "./components/Categories/Addnestedsubcategories";
+
+import PortfolioTable from "./components/Portfolio/PortFolioTable";
+import DistributorTable from "./components/Distributor/DistributorTable";
 import AddCaseData from "./components/CaseCreation/AddCaseData";
 
 function App() {
@@ -61,6 +65,7 @@ function App() {
                     <Route path="/categories" element={<CategoriesPage />} />
                     <Route path="/add-category" element={<AddCategoryPage />} />
                     <Route path="/subcategories" element={<AddSubCategoryPage />} />
+                    <Route path="/add-nestedsubcategories" element={<AddNestedsubcategories />} />
                     <Route path="/edit-category/:id" element={<EditCategory />} />
                     <Route path="/edit-subcategory/:id" element={<EditSubCategory />} />
                     <Route path="/products" element={<Products/>}/>
@@ -68,11 +73,13 @@ function App() {
                     <Route path="/dashboard/overview" element={<Overview />} />
                     <Route path = "/inventory" element = {<Inventory/>}/>
                     <Route path="/doctor" element={<DoctorsTable />} />
+                    <Route path="/distributor" element={<DistributorTable />} />
                     <Route path="/hospitals/list" element={<HospitalTable />} />
                      <Route path="/physicalcount/list" element={<PhysicalCountsTable />} />
                     <Route path="/users/list" element={<UsersTable />} />
                     <Route path = "/inhouseinventory" element = {<InhouseInventory/>}/>
                     <Route path="/principle" element={<PrinciplesModule />} />
+                    <Route path ="/portfolio" element={<PortfolioTable/>}/>
                     <Route path="/principle/list" element={< DataTableWithMenuPrinciple/>} />
                     <Route path="/department" element={<DepartmentsManager />} />
                     <Route path="/invoices/list" element={<InvoiceTable />} />

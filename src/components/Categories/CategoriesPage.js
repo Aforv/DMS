@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { Menu } from '@headlessui/react';
 import { EllipsisVerticalIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import axios from "axios";
-import { TextInput, Dropdown, Button } from "flowbite-react";  // or your UI library
-import { HiSearch } from "react-icons/hi";
+import { Link } from "react-router-dom";
+
 
 const CategoriesPage = () => {
   const navigate = useNavigate();
@@ -112,32 +112,31 @@ const CategoriesPage = () => {
   return (
     <div className="p-6 bg-white rounded-md shadow-md">
       {/* Header */}
-     
-      <div className="flex flex-wrap items-center justify-between gap-1 mb-2">
-  <div className="flex-grow max-w-[250px]">
-    <TextInput
-      icon={HiSearch}
-      type="text"
-      placeholder="Search categories..."
-      value={searchTerm}
-       onChange={handleSearch}
-     
-    />
-  </div>
-  <h1 className="text-xl font-bold whitespace-nowrap">Categories</h1>
-  <div className="flex items-center gap-3">
-    <Dropdown label="Actions">
-      <Dropdown.Item onClick={() => alert("Export to Excel feature coming soon!")}>Export</Dropdown.Item>
-    <Dropdown.Item onClick={() => alert("Import to Excel feature coming soon!")}>Import</Dropdown.Item>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-bold">CATEGORIES</h2>
+        <div className="flex gap-2">
+          <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" onClick={() => navigate("/add-category")}>
+            + Add Categories
+          </button>
+          {/* <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" onClick={() => navigate("/subcategories")}>
+            + Add SubCategories
+          </button> */}
+          <button className="bg-teal-700 text-white px-4 py-2 rounded hover:bg-teal-800" onClick={() => alert("Export to Excel feature coming soon!")}>
+            + Export to Excel
+          </button>
+        </div>
+      </div>
 
-    </Dropdown>
-    <Button color="blue" onClick={() => navigate("/add-category")}>+ Add Category</Button>
-    <Button color="blue" onClick={() => navigate("/subcategories")}>+ Add SubCategories</Button>
-  </div>
-</div>
-
-
-    
+      {/* Search */}
+      <div className="mb-4">
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={handleSearch}
+          placeholder="Search Categories..."
+          className="border border-gray-300 rounded-md px-4 py-2 shadow-sm w-[250px]"
+        />
+      </div>
 
       {/* Category List */}
       <div className="bg-white border rounded-md shadow-sm">
@@ -153,17 +152,25 @@ const CategoriesPage = () => {
                   <span className="font-semibold">{index + 1}.</span>
                   <span className="font-medium text-gray-800">{item.name}</span>
                 </div>
-                <Menu as="div" className="relative inline-block text-left">
-                  <Menu.Button className="p-2 rounded-full hover:bg-gray-100 focus:outline-none">
-                    <span className="sr-only">Open options</span>
-                    <svg
-                      className="w-5 h-5 text-gray-600"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5a1.5 1.5 0 110 3 1.5 1.5 0 010-3z" />
-                    </svg>
-                  </Menu.Button>
+   <div className="flex items-center gap-4 ml-auto">
+      <Link
+        to="/add-nestedsubcategories"
+        onClick={(e) => e.stopPropagation()}
+        className="text-blue-600 hover:underline text-sm font-medium whitespace-nowrap"
+      >
+        + Manage SubCategories
+      </Link>
+
+      <Menu as="div" className="relative inline-block text-left">
+        <Menu.Button className="p-2 rounded-full hover:bg-gray-100 focus:outline-none">
+          <svg
+            className="w-5 h-5 text-gray-600"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5a1.5 1.5 0 110 3 1.5 1.5 0 010-3z" />
+          </svg>
+        </Menu.Button>
 
                   <Menu.Items className="absolute right-0 mt-2 w-36 origin-top-right bg-white border border-gray-200 rounded-md shadow-lg focus:outline-none z-50">
                     <div className="p-1">
@@ -197,9 +204,10 @@ const CategoriesPage = () => {
                 </Menu>
 
               </div>
+              </div>
 
               {/* Subcategories */}
-              {openIndex === index && (
+              {/* {openIndex === index && (
                 <div className="px-6 pb-4 text-gray-700">
                   <p className="mb-2">
                     <strong>Description:</strong> {item.description || "N/A"}
@@ -231,6 +239,19 @@ const CategoriesPage = () => {
                                   </Menu.Button>
                                   <Menu.Items className="absolute right-0 mt-2 w-28 origin-top-right bg-white border border-gray-200 rounded-md shadow-lg z-10">
                                     <div className="py-1">
+                                      <Menu.Item>
+                                        {({ active }) => (
+                                          <button
+                                            onClick={() => navigate(`/Add-Nestedsubcategories/${sub._id}`)}
+                                            className={`${active ? 'bg-gray-100' : ''
+                                              } flex items-center w-full px-4 py-2 text-sm text-gray-700`}
+                                          >
+                                            <PencilSquareIcon className="w-4 h-4 mr-2" />
+                                            ADD+
+                                          </button>
+                                        )}
+                                      </Menu.Item>
+                                      
                                       <Menu.Item>
                                         {({ active }) => (
                                           <button
@@ -268,12 +289,14 @@ const CategoriesPage = () => {
                     )}
                   </div>
                 </div>
-              )}
+              )} */}
             </div>
           ))
         )}
+    
       </div>
     </div>
+
   );
 };
 
